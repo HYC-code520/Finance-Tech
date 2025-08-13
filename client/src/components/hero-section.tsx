@@ -39,7 +39,7 @@ export default function HeroSection() {
 
         {/* CTA Section */}
         <div className="flex justify-center" data-testid="cta-section">
-          <div className="ml-32">
+          <div className="ml-8">
             <Button
               onClick={handleSeeHowItWorks}
               className="bg-accent-cyan text-primary-dark px-8 py-4 rounded-full font-semibold text-lg button-glow transition-all duration-300"
