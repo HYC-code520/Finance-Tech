@@ -38,7 +38,7 @@ export default function HeroSection() {
         </div>
 
         {/* CTA Section */}
-        <div className="flex items-center space-x-8" data-testid="cta-section">
+        <div className="flex justify-end" data-testid="cta-section">
           <Button
             onClick={handleSeeHowItWorks}
             className="bg-accent-cyan text-primary-dark px-8 py-4 rounded-full font-semibold text-lg button-glow transition-all duration-300"
@@ -46,11 +46,6 @@ export default function HeroSection() {
           >
             See How It Works
           </Button>
-          
-          {/* Additional decorative elements */}
-          <div className="hidden lg:block">
-            <DecorativeLine width="w-32" className="animate-pulse-slow" />
-          </div>
         </div>
       </div>
     </main>
