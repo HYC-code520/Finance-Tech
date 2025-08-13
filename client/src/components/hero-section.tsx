@@ -38,14 +38,16 @@ export default function HeroSection() {
         </div>
 
         {/* CTA Section */}
-        <div className="flex justify-end" data-testid="cta-section">
-          <Button
-            onClick={handleSeeHowItWorks}
-            className="bg-accent-cyan text-primary-dark px-8 py-4 rounded-full font-semibold text-lg button-glow transition-all duration-300"
-            data-testid="cta-button"
-          >
-            See How It Works
-          </Button>
+        <div className="flex justify-center" data-testid="cta-section">
+          <div className="ml-32">
+            <Button
+              onClick={handleSeeHowItWorks}
+              className="bg-accent-cyan text-primary-dark px-8 py-4 rounded-full font-semibold text-lg button-glow transition-all duration-300"
+              data-testid="cta-button"
+            >
+              See How It Works
+            </Button>
+          </div>
         </div>
       </div>
     </main>
