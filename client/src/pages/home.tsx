@@ -36,10 +36,7 @@ export default function Home() {
         {/* Hero Section */}
         <HeroSection />
 
-        {/* Mobile Responsive Container */}
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 p-4" data-testid="mobile-container">
-          <DecorativeLine width="w-full" className="h-2 opacity-50" />
-        </div>
+
       </div>
     </div>
   );
