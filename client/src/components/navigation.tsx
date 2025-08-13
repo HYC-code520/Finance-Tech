@@ -14,8 +14,7 @@ export default function Navigation() {
   ];
 
   const handleLogin = () => {
-    // TODO: Implement login functionality
-    console.log("Login clicked");
+    window.location.href = "/login";
   };
 
   return (
