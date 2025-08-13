@@ -19,8 +19,14 @@ export default function Home() {
         Your browser does not support the video tag.
       </video>
 
-      {/* Dark overlay for better text readability */}
-      <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-30 z-10" data-testid="video-overlay" />
+      {/* Gradient overlay from left (dark blue) to right (transparent) */}
+      <div 
+        className="absolute top-0 left-0 w-full h-full z-10" 
+        style={{
+          background: 'linear-gradient(to right, #092946 0%, transparent 100%)'
+        }}
+        data-testid="gradient-overlay" 
+      />
 
       {/* Content Layer */}
       <div className="relative z-20">
