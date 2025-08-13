@@ -23,7 +23,7 @@ export default function Home() {
       <div 
         className="absolute top-0 left-0 w-full h-full z-10" 
         style={{
-          background: 'linear-gradient(to right, #092946 0%, transparent 100%)'
+          background: 'linear-gradient(to right, #041420 0%, #092946 30%, rgba(9, 41, 70, 0.7) 60%, transparent 100%)'
         }}
         data-testid="gradient-overlay" 
       />
