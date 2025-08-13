@@ -19,7 +19,7 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="w-full py-6 px-8 lg:px-16" data-testid="navigation">
+    <nav className="w-full py-6 px-8 lg:px-16 animate-shift-down" data-testid="navigation">
       <div className="flex justify-between items-center">
         {/* Desktop Navigation */}
         <div className="hidden md:flex space-x-12">

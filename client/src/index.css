@@ -296,6 +296,22 @@
   opacity: 0;
 }
 
+/* Shift animation for navbar */
+@keyframes shiftDown {
+  0% {
+    transform: translateY(-100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-shift-down {
+  animation: shiftDown 1s ease-out forwards;
+}
+
 /* Button hover effects */
 .button-glow {
   transition: all 0.3s ease;
