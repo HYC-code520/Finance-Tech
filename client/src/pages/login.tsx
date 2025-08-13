@@ -52,14 +52,6 @@ export default function Login() {
 
       {/* Login Form Container */}
       <div className="relative z-30 w-full max-w-md mx-4">
-        {/* Logo/Icon */}
-        <div className="flex justify-center mb-6">
-          <div className="w-16 h-16 bg-gradient-to-br from-accent-cyan to-white rounded-2xl flex items-center justify-center">
-            <div className="w-8 h-8 bg-primary-dark rounded-lg flex items-center justify-center">
-              <div className="w-4 h-4 bg-accent-cyan rounded-sm" />
-            </div>
-          </div>
-        </div>
 
         {/* Welcome Text */}
         <div className="text-center mb-8">
