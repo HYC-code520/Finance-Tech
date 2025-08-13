@@ -16,10 +16,10 @@ export default function HeroSection() {
         {/* Hero Title */}
         <div className="mb-12" data-testid="hero-title">
           <h1 className="text-6xl lg:text-8xl font-bold mb-4 leading-tight">
-            <span className="text-white">S&P</span>
+            <span className="text-white title-glow">S&P</span>
           </h1>
           <h1 className="text-6xl lg:text-8xl font-bold mb-8 leading-tight">
-            <span className="text-accent-cyan">Capital IQ</span>
+            <span className="text-accent-cyan title-glow-cyan">Capital IQ</span>
           </h1>
         </div>
 
