@@ -31,7 +31,7 @@ export default function HeroSection() {
         />
 
         {/* Hero Subtitle */}
-        <div className="mb-12 max-w-2xl" data-testid="hero-subtitle">
+        <div className="mb-12 max-w-lg" data-testid="hero-subtitle">
           <p className="text-xl lg:text-2xl text-gray-300 leading-relaxed font-light">
             Transforming scattered client feedback into strategic, data-driven decisions
           </p>
