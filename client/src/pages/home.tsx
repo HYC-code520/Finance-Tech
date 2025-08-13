@@ -4,7 +4,14 @@ import DecorativeLine from "@/components/decorative-line";
 
 export default function Home() {
   return (
-    <div className="min-h-screen gradient-bg text-white font-sans" data-testid="home-page">
+    <div className="min-h-screen gradient-bg text-white font-sans relative" data-testid="home-page">
+      {/* Floating Particles Background */}
+      <div className="floating-particles" data-testid="floating-particles">
+        {Array.from({ length: 9 }, (_, i) => (
+          <div key={i} className="particle" />
+        ))}
+      </div>
+
       {/* Navigation */}
       <Navigation />
 
