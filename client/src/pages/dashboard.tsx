@@ -306,22 +306,6 @@ export default function Dashboard() {
                   </span>
                 </button>
               </div>
-
-              {/* Tab Content */}
-              <div className="p-4">
-                {activeTab === "assigned" && (
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-white mb-1">{assignedToMe}</div>
-                    <div className="text-gray-300 text-xs">tickets</div>
-                  </div>
-                )}
-                {activeTab === "mentioned" && (
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-white mb-1">{mentionedAI}</div>
-                    <div className="text-gray-300 text-xs">AI mentions</div>
-                  </div>
-                )}
-              </div>
             </div>
           </div>
 
