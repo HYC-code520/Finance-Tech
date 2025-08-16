@@ -268,7 +268,7 @@ export default function Dashboard() {
                     }`} />
                   </div>
                   <div>
-                    <div className="text-white text-xs font-medium">Assigned</div>
+                    <div className="text-white text-xs font-medium">Raw tickets</div>
                   </div>
                   <span className={`text-xs px-2 py-1 rounded-full font-medium ${
                     activeTab === "assigned"
@@ -295,7 +295,7 @@ export default function Dashboard() {
                     }`} />
                   </div>
                   <div>
-                    <div className="text-white text-xs font-medium">AI</div>
+                    <div className="text-white text-xs font-medium">Mentioned AI</div>
                   </div>
                   <span className={`text-xs px-2 py-1 rounded-full font-medium ${
                     activeTab === "mentioned"
