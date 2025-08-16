@@ -74,7 +74,7 @@ export default function Login() {
               placeholder="emily@gmail.com"
               value={formData.email}
               onChange={handleInputChange}
-              className="bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-gray-300 focus:border-accent-cyan focus:ring-accent-cyan/30"
+              className="bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-gray-300 focus:border-accent-cyan focus:ring-accent-cyan/30 focus:outline-none outline-none shadow-lg"
               data-testid="input-email"
             />
           </div>
@@ -89,7 +89,7 @@ export default function Login() {
               placeholder="••••••••••"
               value={formData.password}
               onChange={handleInputChange}
-              className="bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-gray-300 focus:border-accent-cyan focus:ring-accent-cyan/30"
+              className="bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-gray-300 focus:border-accent-cyan focus:ring-accent-cyan/30 focus:outline-none outline-none shadow-lg"
               data-testid="input-password"
             />
           </div>

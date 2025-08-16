@@ -76,7 +76,7 @@ export default function Signup() {
                 placeholder="John"
                 value={formData.firstName}
                 onChange={handleInputChange}
-                className="bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-gray-300 focus:border-accent-cyan focus:ring-accent-cyan/30"
+                className="bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-gray-300 focus:border-accent-cyan focus:ring-accent-cyan/30 focus:outline-none outline-none shadow-lg"
                 data-testid="input-firstname"
                 required
               />
@@ -90,7 +90,7 @@ export default function Signup() {
                 placeholder="Doe"
                 value={formData.lastName}
                 onChange={handleInputChange}
-                className="bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-gray-300 focus:border-accent-cyan focus:ring-accent-cyan/30"
+                className="bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-gray-300 focus:border-accent-cyan focus:ring-accent-cyan/30 focus:outline-none outline-none shadow-lg"
                 data-testid="input-lastname"
                 required
               />
@@ -109,7 +109,7 @@ export default function Signup() {
               placeholder="john.doe@spglobal.com"
               value={formData.email}
               onChange={handleInputChange}
-              className="bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-gray-300 focus:border-accent-cyan focus:ring-accent-cyan/30"
+              className="bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-gray-300 focus:border-accent-cyan focus:ring-accent-cyan/30 focus:outline-none outline-none shadow-lg"
               data-testid="input-email"
               required
             />
@@ -125,7 +125,7 @@ export default function Signup() {
               placeholder="••••••••"
               value={formData.password}
               onChange={handleInputChange}
-              className="bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-gray-300 focus:border-accent-cyan focus:ring-accent-cyan/30"
+              className="bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-gray-300 focus:border-accent-cyan focus:ring-accent-cyan/30 focus:outline-none outline-none shadow-lg"
               data-testid="input-password"
               required
             />
@@ -140,7 +140,7 @@ export default function Signup() {
               placeholder="••••••••"
               value={formData.confirmPassword}
               onChange={handleInputChange}
-              className="bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-gray-300 focus:border-accent-cyan focus:ring-accent-cyan/30"
+              className="bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-gray-300 focus:border-accent-cyan focus:ring-accent-cyan/30 focus:outline-none outline-none shadow-lg"
               data-testid="input-confirm-password"
               required
             />
