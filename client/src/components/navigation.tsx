@@ -8,7 +8,6 @@ export default function Navigation() {
 
   const navItems = [
     { name: "Home", path: "/" },
-    { name: "About", path: "/about" },
     { name: "Dashboard", path: "/dashboard" },
     { name: "Design System", path: "/design-system" },
   ];
