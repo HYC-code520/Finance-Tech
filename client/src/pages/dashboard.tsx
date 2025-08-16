@@ -221,7 +221,7 @@ export default function Dashboard() {
     canvas.height = canvas.offsetHeight
 
     const particles: Particle[] = []
-    const particleCount = 100
+    const particleCount = 50
 
     class ParticleImpl implements Particle {
       x: number
@@ -232,15 +232,17 @@ export default function Dashboard() {
       color: string
 
       constructor() {
+        if (!canvas) return
         this.x = Math.random() * canvas.width
         this.y = Math.random() * canvas.height
-        this.size = Math.random() * 3 + 1
+        this.size = Math.random() * 30 + 10 // 10x bigger: was 3+1, now 30+10
         this.speedX = (Math.random() - 0.5) * 0.5
         this.speedY = (Math.random() - 0.5) * 0.5
-        this.color = `rgba(${Math.floor(Math.random() * 100) + 100}, ${Math.floor(Math.random() * 100) + 150}, ${Math.floor(Math.random() * 55) + 200}, ${Math.random() * 0.5 + 0.2})`
+        this.color = `rgba(${Math.floor(Math.random() * 100) + 100}, ${Math.floor(Math.random() * 100) + 150}, ${Math.floor(Math.random() * 55) + 200}, ${Math.random() * 0.3 + 0.1})`
       }
 
       update() {
+        if (!canvas) return
         this.x += this.speedX
         this.y += this.speedY
 
@@ -253,10 +255,18 @@ export default function Dashboard() {
 
       draw() {
         if (!ctx) return
+        
+        // Add blur effect
+        ctx.filter = 'blur(4px)'
         ctx.fillStyle = this.color
         ctx.beginPath()
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2)
+        
+        // Create oval/ellipse shape instead of circle
+        ctx.ellipse(this.x, this.y, this.size, this.size * 0.6, 0, 0, Math.PI * 2)
         ctx.fill()
+        
+        // Reset filter
+        ctx.filter = 'none'
       }
     }
 
