@@ -235,9 +235,9 @@ export default function Dashboard() {
         if (!canvas) return
         this.x = Math.random() * canvas.width
         this.y = Math.random() * canvas.height
-        this.size = Math.random() * 30 + 10 // 10x bigger: was 3+1, now 30+10
-        this.speedX = (Math.random() - 0.5) * 4 // Increased speed to 4 for faster movement
-        this.speedY = (Math.random() - 0.5) * 4 // Increased speed to 4 for faster movement
+        this.size = Math.random() * 40 + 15 // Increased size from 30+10 to 40+15
+        this.speedX = (Math.random() - 0.5) * 8 // Doubled speed from 4 to 8
+        this.speedY = (Math.random() - 0.5) * 8 // Doubled speed from 4 to 8
         this.color = `rgba(${Math.floor(Math.random() * 100) + 100}, ${Math.floor(Math.random() * 100) + 150}, ${Math.floor(Math.random() * 55) + 200}, ${Math.random() * 0.3 + 0.1})`
       }
 
