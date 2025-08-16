@@ -221,7 +221,7 @@ export default function Dashboard() {
     canvas.height = canvas.offsetHeight
 
     const particles: Particle[] = []
-    const particleCount = 100
+    const particleCount = 150 // More particles but much smaller and fainter
 
     class ParticleImpl implements Particle {
       x: number
@@ -232,12 +232,13 @@ export default function Dashboard() {
       color: string
 
       constructor() {
-        this.x = Math.random() * canvas.width
-        this.y = Math.random() * canvas.height
-        this.size = Math.random() * 3 + 1
-        this.speedX = (Math.random() - 0.5) * 0.5
-        this.speedY = (Math.random() - 0.5) * 0.5
-        this.color = `rgba(${Math.floor(Math.random() * 100) + 100}, ${Math.floor(Math.random() * 100) + 150}, ${Math.floor(Math.random() * 55) + 200}, ${Math.random() * 0.5 + 0.2})`
+        this.x = Math.random() * (canvas?.width || 0)
+        this.y = Math.random() * (canvas?.height || 0)
+        this.size = Math.random() * 1.5 + 0.5 // Much smaller particles
+        this.speedX = (Math.random() - 0.5) * 0.2 // Slower movement
+        this.speedY = (Math.random() - 0.5) * 0.2
+        // Much more subtle colors - very faint cyan/white
+        this.color = `rgba(113, 253, 255, ${Math.random() * 0.15 + 0.05})`
       }
 
       update() {
@@ -245,10 +246,10 @@ export default function Dashboard() {
         this.y += this.speedY
 
         // Wrap around edges
-        if (this.x > canvas.width) this.x = 0
-        if (this.x < 0) this.x = canvas.width
-        if (this.y > canvas.height) this.y = 0
-        if (this.y < 0) this.y = canvas.height
+        if (this.x > (canvas?.width || 0)) this.x = 0
+        if (this.x < 0) this.x = canvas?.width || 0
+        if (this.y > (canvas?.height || 0)) this.y = 0
+        if (this.y < 0) this.y = canvas?.height || 0
       }
 
       draw() {
@@ -301,7 +302,7 @@ export default function Dashboard() {
       data-testid="dashboard-page"
     >
       {/* Animated particles background */}
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-30" />
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-10" />
       {/* Navigation */}
       <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20">
         <Navigation />
