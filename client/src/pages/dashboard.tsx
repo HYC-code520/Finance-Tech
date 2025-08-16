@@ -355,7 +355,19 @@ export default function Dashboard() {
                         </div>
                       </div>
                     </div>
-                    <span className="text-gray-400 text-xs">{ticket.id}</span>
+                    <div className="relative">
+                      <div 
+                        className="bg-[#71FDFF] text-white px-3 py-1 text-xs font-medium"
+                        style={{
+                          borderTopLeftRadius: '8px',
+                          borderBottomLeftRadius: '8px',
+                          borderTopRightRadius: '0px',
+                          borderBottomRightRadius: '0px'
+                        }}
+                      >
+                        #{index + 1}
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
