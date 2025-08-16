@@ -355,7 +355,7 @@ export default function Dashboard() {
                         </div>
                       </div>
                     </div>
-                    <div className="absolute bottom-0 right-0">
+                    <div className="absolute bottom-4 right-0">
                       <div 
                         className="bg-[#71FDFF] text-black px-4 py-1 text-xs font-medium"
                         style={{
