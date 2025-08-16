@@ -323,18 +323,12 @@ export default function Dashboard() {
                     )}
                   </div>
 
-                  {/* Progress Bar */}
+                  {/* Ticket Stats */}
                   <div className="mb-4">
                     <div className="flex justify-between text-xs text-gray-300 mb-1">
                       <span>{ticket.responses} Resp</span>
                       <span>Req {ticket.requester}</span>
                       <span>{ticket.timeAgo}</span>
-                    </div>
-                    <div className="w-full bg-primary-dark/50 rounded-full h-1.5">
-                      <div 
-                        className="bg-accent-cyan h-1.5 rounded-full transition-all"
-                        style={{ width: `${ticket.progress}%` }}
-                      />
                     </div>
                   </div>
 
