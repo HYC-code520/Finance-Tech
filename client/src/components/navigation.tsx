@@ -24,11 +24,7 @@ export default function Navigation() {
           {navItems.map((item) => (
             <Link key={item.name} href={item.path}>
               <a
-                className={`font-medium text-lg transition-all duration-300 hover:-translate-y-0.5 ${
-                  location === item.path
-                    ? "text-white"
-                    : "text-gray-300 hover:text-accent-cyan"
-                }`}
+                className="font-medium transition-all duration-300 hover:-translate-y-0.5 text-white text-[16px]"
                 data-testid={`nav-link-${item.name.toLowerCase()}`}
               >
                 {item.name}
@@ -70,13 +66,12 @@ export default function Navigation() {
         {/* Sign In Button */}
         <Button
           onClick={handleLogin}
-          className="bg-accent-cyan text-primary-dark px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-full font-semibold text-sm sm:text-base md:text-lg hover:bg-white button-glow transition-all duration-300"
+          className="bg-accent-cyan text-primary-dark px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-full font-semibold sm:text-base md:text-lg hover:bg-white button-glow transition-all duration-300 text-[16px]"
           data-testid="signin-button"
         >
           Sign In
         </Button>
       </div>
-
       {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden mt-4 pb-4" data-testid="mobile-menu">
