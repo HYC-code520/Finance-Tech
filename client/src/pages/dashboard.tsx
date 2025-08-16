@@ -451,7 +451,7 @@ export default function Dashboard() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Avatar className="w-6 h-6">
-                        <AvatarFallback className="bg-primary-dark text-accent-cyan text-xs font-medium">
+                        <AvatarFallback className="bg-slate-800 text-accent-cyan text-xs font-medium">
                           {ticket.assignee.name.split(' ').map(n => n[0]).join('')}
                         </AvatarFallback>
                       </Avatar>
