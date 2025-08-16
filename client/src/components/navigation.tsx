@@ -69,13 +69,13 @@ export default function Navigation() {
           </svg>
         </button>
 
-        {/* Login Button */}
+        {/* Sign In Button */}
         <Button
           onClick={handleLogin}
           className="bg-accent-cyan text-primary-dark px-6 py-2 rounded-full font-semibold text-lg hover:bg-white button-glow transition-all duration-300"
-          data-testid="login-button"
+          data-testid="signin-button"
         >
-          Log In
+          Sign In
         </Button>
       </div>
 
