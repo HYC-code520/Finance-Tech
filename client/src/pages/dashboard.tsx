@@ -212,13 +212,7 @@ export default function Dashboard() {
 
   return (
     <div 
-      className="min-h-screen relative overflow-hidden" 
-      style={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}
+      className="min-h-screen relative overflow-hidden bg-slate-900" 
       data-testid="dashboard-page"
     >
       {/* Navigation */}
