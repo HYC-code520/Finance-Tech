@@ -19,17 +19,21 @@ function Router() {
       <Route path="/design-system" component={DesignSystem} />
       <Route path="/about" component={() => (
         <div className="min-h-screen gradient-bg text-white">
-          <Navigation />
-          <div className="flex items-center justify-center h-screen">
-            <h1 className="text-4xl">About Page - Coming Soon</h1>
+          <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20">
+            <Navigation />
+            <div className="flex items-center justify-center min-h-screen -mt-24">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-center">About Page - Coming Soon</h1>
+            </div>
           </div>
         </div>
       )} />
       <Route path="/dashboard" component={() => (
         <div className="min-h-screen gradient-bg text-white">
-          <Navigation />
-          <div className="flex items-center justify-center h-screen">
-            <h1 className="text-4xl">Dashboard - Coming Soon</h1>
+          <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20">
+            <Navigation />
+            <div className="flex items-center justify-center min-h-screen -mt-24">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-center">Dashboard - Coming Soon</h1>
+            </div>
           </div>
         </div>
       )} />
