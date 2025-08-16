@@ -238,7 +238,7 @@ export default function Dashboard() {
               placeholder="Search for users, groups, companies, articles, requests, admin options..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder:text-gray-300 focus:border-accent-cyan focus:ring-accent-cyan/30"
+              className="pl-10 bg-[#092946]/80 backdrop-blur-sm border-[#71FDFF]/30 text-white placeholder:text-gray-300 focus:border-[#71FDFF] focus:ring-[#71FDFF]/30 rounded-2xl"
               data-testid="search-input"
             />
           </div>
@@ -249,7 +249,7 @@ export default function Dashboard() {
           
           {/* Horizontal Tabs */}
           <div className="mb-6">
-            <div className="w-full backdrop-blur-lg bg-white/10 border border-white/20 rounded-xl overflow-hidden">
+            <div className="w-full bg-[#092946]/80 border border-[#71FDFF]/30 rounded-2xl overflow-hidden backdrop-blur-sm">
               {/* Tab Headers */}
               <div className="flex border-b border-white/10">
                 <button
@@ -310,11 +310,11 @@ export default function Dashboard() {
           </div>
 
           {/* Tickets Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
               {filteredTickets.map((ticket, index) => (
                 <div 
                   key={ticket.id}
-                  className="relative backdrop-blur-lg bg-white/10 border border-white/20 rounded-xl p-4 hover:bg-white/15 transition-colors"
+                  className="relative bg-[#092946]/80 border border-[#71FDFF]/30 rounded-2xl p-5 hover:border-[#71FDFF]/50 transition-all duration-300 backdrop-blur-sm"
                   data-testid={`ticket-card-${index}`}
                 >
                   {/* Status and Priority Header */}
