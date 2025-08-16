@@ -40,7 +40,9 @@ export default function Signup() {
       data-testid="signup-page"
     >
       {/* Navigation */}
-      <Navigation />
+      <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20">
+        <Navigation />
+      </div>
 
       {/* Floating particles/stars */}
       <div className="absolute top-10 left-20 w-2 h-2 bg-accent-cyan rounded-full animate-pulse z-20" />
