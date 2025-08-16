@@ -18,7 +18,7 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="w-full py-6 px-8 lg:px-16 animate-shift-down" data-testid="navigation">
+    <nav className="w-full py-4 sm:py-6 px-4 sm:px-6 md:px-8 lg:px-16 animate-shift-down" data-testid="navigation">
       <div className="flex justify-between items-center">
         {/* Desktop Navigation */}
         <div className="hidden md:flex space-x-12">
@@ -71,7 +71,7 @@ export default function Navigation() {
         {/* Sign In Button */}
         <Button
           onClick={handleLogin}
-          className="bg-accent-cyan text-primary-dark px-6 py-2 rounded-full font-semibold text-lg hover:bg-white button-glow transition-all duration-300"
+          className="bg-accent-cyan text-primary-dark px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-full font-semibold text-sm sm:text-base md:text-lg hover:bg-white button-glow transition-all duration-300"
           data-testid="signin-button"
         >
           Sign In

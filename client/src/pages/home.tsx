@@ -27,7 +27,7 @@ export default function Home() {
         data-testid="gradient-overlay" 
       />
       {/* Content Layer */}
-      <div className="relative z-20 ml-[20px] mr-[20px]">
+      <div className="relative z-20 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20">
         {/* Navigation */}
         <Navigation />
 
