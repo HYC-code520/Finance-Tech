@@ -249,7 +249,7 @@ export default function Dashboard() {
           
           {/* Horizontal Tabs */}
           <div className="mb-6">
-            <div className="max-w-md backdrop-blur-lg bg-white/10 border border-white/20 rounded-xl overflow-hidden">
+            <div className="w-full backdrop-blur-lg bg-white/10 border border-white/20 rounded-xl overflow-hidden">
               {/* Tab Headers */}
               <div className="flex border-b border-white/10">
                 <button
