@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Search, User, Clock, AlertCircle, CheckCircle, XCircle } from "lucide-react";
 import Navigation from "@/components/navigation";
+import Sidebar from "@/components/sidebar";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -205,25 +206,30 @@ export default function Dashboard() {
   ).length;
 
   return (
-    <div 
-      className="min-h-screen relative overflow-hidden" 
-      style={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}
-      data-testid="dashboard-page"
-    >
-      {/* Navigation */}
-      <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20">
-        <Navigation />
-      </div>
+    <div className="min-h-screen flex">
+      {/* Sidebar */}
+      <Sidebar />
+      
+      {/* Main Content */}
+      <div 
+        className="flex-1 ml-16 min-h-screen relative overflow-hidden" 
+        style={{
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+        data-testid="dashboard-page"
+      >
+        {/* Navigation */}
+        <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20">
+          <Navigation />
+        </div>
 
-      {/* Dashboard Content */}
-      <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20 py-8">
-        {/* Header Section */}
-        <div className="flex flex-col lg:flex-row gap-6 mb-8">
+        {/* Dashboard Content */}
+        <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20 py-8">
+          {/* Header Section */}
+          <div className="flex flex-col lg:flex-row gap-6 mb-8">
           
           {/* Left Sidebar - Stats */}
           <div className="w-full lg:w-64 space-y-4">
@@ -355,6 +361,7 @@ export default function Dashboard() {
               ))}
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>

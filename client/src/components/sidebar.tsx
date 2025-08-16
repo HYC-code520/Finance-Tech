@@ -1,0 +1,86 @@
+import { BarChart3, Share2, Users, Settings } from "lucide-react";
+import { Link, useLocation } from "wouter";
+
+const sidebarItems = [
+  {
+    icon: BarChart3,
+    label: "Analytics",
+    href: "/dashboard",
+    isActive: true
+  },
+  {
+    icon: Share2,
+    label: "Network",
+    href: "/network"
+  },
+  {
+    icon: Users,
+    label: "Users",
+    href: "/users"
+  },
+  {
+    icon: Settings,
+    label: "Settings",
+    href: "/settings"
+  }
+];
+
+export default function Sidebar() {
+  const [location] = useLocation();
+
+  return (
+    <div className="fixed left-0 top-0 h-full w-16 bg-gradient-to-b from-[#1a3a4a] to-[#0f2a3a] border-r border-white/10 z-50">
+      <div className="flex flex-col items-center py-6 space-y-6">
+        
+        {/* Logo/Brand */}
+        <div className="w-8 h-8 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-lg flex items-center justify-center">
+          <BarChart3 className="w-5 h-5 text-white" />
+        </div>
+
+        {/* Navigation Items */}
+        <nav className="flex flex-col space-y-4">
+          {sidebarItems.map((item, index) => {
+            const Icon = item.icon;
+            const isActive = location === item.href || (item.href === "/dashboard" && location === "/dashboard");
+            
+            return (
+              <Link
+                key={index}
+                href={item.href}
+                className={`
+                  group relative flex items-center justify-center w-10 h-10 rounded-lg
+                  transition-all duration-200 hover:bg-white/10
+                  ${isActive 
+                    ? 'bg-cyan-500/20 text-cyan-400 shadow-lg shadow-cyan-500/25' 
+                    : 'text-gray-400 hover:text-white'
+                  }
+                `}
+                data-testid={`sidebar-${item.label.toLowerCase()}`}
+              >
+                <Icon className="w-5 h-5" />
+                
+                {/* Tooltip */}
+                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                  {item.label}
+                </div>
+                
+                {/* Active Indicator */}
+                {isActive && (
+                  <div className="absolute -right-[1px] top-1/2 transform -translate-y-1/2 w-1 h-6 bg-cyan-400 rounded-l-full" />
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Bottom Section */}
+        <div className="flex-1" />
+        
+        {/* User Avatar/Profile */}
+        <div className="w-8 h-8 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center">
+          <span className="text-white text-xs font-medium">SS</span>
+        </div>
+      </div>
+    </div>
+  );
+}
