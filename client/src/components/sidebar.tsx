@@ -32,11 +32,6 @@ export default function Sidebar() {
     <div className="fixed left-0 top-20 h-[calc(100vh-5rem)] w-16 bg-gradient-to-b from-[#1a3a4a] to-[#0f2a3a] border-r border-white/10 z-40">
       <div className="flex flex-col items-center py-6 space-y-6">
         
-        {/* Logo/Brand */}
-        <div className="w-8 h-8 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-lg flex items-center justify-center">
-          <BarChart3 className="w-5 h-5 text-white" />
-        </div>
-
         {/* Navigation Items */}
         <nav className="flex flex-col space-y-4">
           {sidebarItems.map((item, index) => {
