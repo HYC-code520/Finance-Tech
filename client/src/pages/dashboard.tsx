@@ -200,6 +200,8 @@ interface Particle {
   speedX: number;
   speedY: number;
   color: string;
+  scaleX?: number;
+  scaleY?: number;
   update(): void;
   draw(): void;
 }
@@ -221,7 +223,7 @@ export default function Dashboard() {
     canvas.height = canvas.offsetHeight
 
     const particles: Particle[] = []
-    const particleCount = 100
+    const particleCount = 50
 
     class ParticleImpl implements Particle {
       x: number
@@ -230,14 +232,19 @@ export default function Dashboard() {
       speedX: number
       speedY: number
       color: string
+      scaleX: number
+      scaleY: number
 
       constructor() {
         this.x = Math.random() * canvas.width
         this.y = Math.random() * canvas.height
-        this.size = Math.random() * 3 + 1
-        this.speedX = (Math.random() - 0.5) * 0.5
-        this.speedY = (Math.random() - 0.5) * 0.5
-        this.color = `rgba(${Math.floor(Math.random() * 100) + 100}, ${Math.floor(Math.random() * 100) + 150}, ${Math.floor(Math.random() * 55) + 200}, ${Math.random() * 0.5 + 0.2})`
+        this.size = Math.random() * 20 + 15 // Much larger particles (15-35px)
+        this.speedX = (Math.random() - 0.5) * 0.3
+        this.speedY = (Math.random() - 0.5) * 0.3
+        this.scaleX = Math.random() * 1.5 + 0.5 // Oval shape variation
+        this.scaleY = Math.random() * 1.5 + 0.5
+        // Much more transparent particles with cyan tones
+        this.color = `rgba(113, 253, 255, ${Math.random() * 0.1 + 0.05})`
       }
 
       update() {
@@ -245,18 +252,33 @@ export default function Dashboard() {
         this.y += this.speedY
 
         // Wrap around edges
-        if (this.x > canvas.width) this.x = 0
-        if (this.x < 0) this.x = canvas.width
-        if (this.y > canvas.height) this.y = 0
-        if (this.y < 0) this.y = canvas.height
+        if (this.x > canvas.width + this.size) this.x = -this.size
+        if (this.x < -this.size) this.x = canvas.width + this.size
+        if (this.y > canvas.height + this.size) this.y = -this.size
+        if (this.y < -this.size) this.y = canvas.height + this.size
       }
 
       draw() {
         if (!ctx) return
-        ctx.fillStyle = this.color
+        ctx.save()
+        
+        // Create radial gradient for feathered edges
+        const gradient = ctx.createRadialGradient(
+          this.x, this.y, 0,
+          this.x, this.y, this.size
+        )
+        gradient.addColorStop(0, this.color)
+        gradient.addColorStop(0.7, this.color.replace(/[\d\.]+\)$/g, '0.02)')) // Fade to almost transparent
+        gradient.addColorStop(1, 'rgba(113, 253, 255, 0)') // Completely transparent at edges
+        
+        ctx.fillStyle = gradient
+        ctx.scale(this.scaleX, this.scaleY) // Apply oval scaling
+        
         ctx.beginPath()
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2)
+        ctx.arc(this.x / this.scaleX, this.y / this.scaleY, this.size, 0, Math.PI * 2)
         ctx.fill()
+        
+        ctx.restore()
       }
     }
 
