@@ -1,8 +1,20 @@
+import dotenv from 'dotenv';
 import express, { type Request, Response, NextFunction } from "express";
+import cors from 'cors';
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
+// Load environment variables first
+dotenv.config();
+
 const app = express();
+
+// Enable CORS for all routes
+app.use(cors({
+  origin: true, // Allow all origins in development
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -61,11 +73,16 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = parseInt(process.env.PORT || '5000', 10);
+  
+  // Use localhost for Windows compatibility instead of 0.0.0.0
+  const host = process.platform === 'win32' ? 'localhost' : '0.0.0.0';
+  
   server.listen({
     port,
-    host: "0.0.0.0",
-    reusePort: true,
+    host,
+    // Remove reusePort for Windows compatibility
+    ...(process.platform !== 'win32' && { reusePort: true }),
   }, () => {
-    log(`serving on port ${port}`);
+    log(`serving on port ${port} (${host})`);
   });
 })();
