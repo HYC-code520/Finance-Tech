@@ -2,17 +2,21 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "wouter";
 import Navigation from "@/components/navigation";
+import { Link } from "wouter";
 import backgroundImage from "@assets/Blue White Modern Artificial Intelligence Video-4_1755117300086.png";
 
-export default function Login() {
+export default function Signup() {
   const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
     email: "",
-    password: ""
+    password: "",
+    confirmPassword: "",
+    company: ""
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
@@ -21,7 +25,7 @@ export default function Login() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login form submitted:", formData);
+    console.log("Signup form submitted:", formData);
   };
 
   return (
@@ -33,7 +37,7 @@ export default function Login() {
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
       }}
-      data-testid="login-page"
+      data-testid="signup-page"
     >
       {/* Navigation */}
       <Navigation />
@@ -44,83 +48,140 @@ export default function Login() {
       <div className="absolute bottom-40 left-16 w-2 h-2 bg-accent-cyan rounded-full animate-glow z-20" />
       <div className="absolute top-20 right-20 w-4 h-4 bg-white opacity-60 transform rotate-45 z-20" style={{clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)"}} />
 
-      {/* Login Form Container - Centered */}
+      {/* Signup Form Container - Centered */}
       <div className="min-h-screen flex items-center justify-center">
         <div className="relative z-30 w-full max-w-md mx-4 backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl p-8 shadow-2xl">
 
         {/* Welcome Text */}
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-white mb-2 title-glow">
-            Sign in to S&P Capital IQ
+            Create Your Account
           </h1>
           <p className="text-gray-300 text-sm">
-            Enter your credentials to access your account
+            Join S&P Capital IQ to access powerful financial insights
           </p>
         </div>
 
-        {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-4" data-testid="login-form">
+        {/* Signup Form */}
+        <form onSubmit={handleSubmit} className="space-y-4" data-testid="signup-form">
+          {/* Name Fields */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label htmlFor="firstName" className="text-gray-300 text-sm">First Name</Label>
+              <Input
+                id="firstName"
+                name="firstName"
+                type="text"
+                placeholder="John"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                className="bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-gray-300 focus:border-accent-cyan focus:ring-accent-cyan/30"
+                data-testid="input-firstname"
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="lastName" className="text-gray-300 text-sm">Last Name</Label>
+              <Input
+                id="lastName"
+                name="lastName"
+                type="text"
+                placeholder="Doe"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                className="bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-gray-300 focus:border-accent-cyan focus:ring-accent-cyan/30"
+                data-testid="input-lastname"
+                required
+              />
+            </div>
+          </div>
 
-
-          {/* Email */}
+          {/* Company Field */}
           <div>
-            <Label htmlFor="email" className="text-gray-300 text-sm">Email</Label>
+            <Label htmlFor="company" className="text-gray-300 text-sm">Company</Label>
+            <Input
+              id="company"
+              name="company"
+              type="text"
+              placeholder="Your Company"
+              value={formData.company}
+              onChange={handleInputChange}
+              className="bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-gray-300 focus:border-accent-cyan focus:ring-accent-cyan/30"
+              data-testid="input-company"
+            />
+          </div>
+
+          {/* Email Field */}
+          <div>
+            <Label htmlFor="email" className="text-gray-300 text-sm">Work Email</Label>
             <Input
               id="email"
               name="email"
               type="email"
-              placeholder="emily@gmail.com"
+              placeholder="john.doe@company.com"
               value={formData.email}
               onChange={handleInputChange}
               className="bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-gray-300 focus:border-accent-cyan focus:ring-accent-cyan/30"
               data-testid="input-email"
+              required
             />
           </div>
 
-          {/* Password */}
+          {/* Password Fields */}
           <div>
             <Label htmlFor="password" className="text-gray-300 text-sm">Password</Label>
             <Input
               id="password"
               name="password"
               type="password"
-              placeholder="••••••••••"
+              placeholder="••••••••"
               value={formData.password}
               onChange={handleInputChange}
               className="bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-gray-300 focus:border-accent-cyan focus:ring-accent-cyan/30"
               data-testid="input-password"
+              required
             />
           </div>
 
-          {/* Forgot Password */}
-          <div className="text-right">
-            <a href="#" className="text-sm text-gray-300 hover:text-accent-cyan transition-colors" data-testid="link-forgot-password">
-              Forgot your password?
-            </a>
+          <div>
+            <Label htmlFor="confirmPassword" className="text-gray-300 text-sm">Confirm Password</Label>
+            <Input
+              id="confirmPassword"
+              name="confirmPassword"
+              type="password"
+              placeholder="••••••••"
+              value={formData.confirmPassword}
+              onChange={handleInputChange}
+              className="bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-gray-300 focus:border-accent-cyan focus:ring-accent-cyan/30"
+              data-testid="input-confirm-password"
+              required
+            />
           </div>
 
-          {/* Remember Me */}
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="remember"
-                className="w-4 h-4 text-accent-cyan bg-white/10 border-white/30 rounded focus:ring-accent-cyan focus:ring-1"
-                data-testid="checkbox-remember"
-              />
-              <label htmlFor="remember" className="text-gray-300">
-                Remember me
-              </label>
-            </div>
+          {/* Terms Agreement */}
+          <div className="flex items-start space-x-2 text-xs text-gray-300">
+            <input
+              type="checkbox"
+              id="terms"
+              className="mt-1 w-4 h-4 text-accent-cyan bg-white/10 border-white/30 rounded focus:ring-accent-cyan focus:ring-1"
+              data-testid="checkbox-terms"
+              required
+            />
+            <label htmlFor="terms">
+              I agree to the{" "}
+              <a href="#" className="text-accent-cyan hover:underline cursor-pointer">Terms of Service</a>
+              {" "}and{" "}
+              <a href="#" className="text-accent-cyan hover:underline cursor-pointer">Privacy Policy</a>
+            </label>
           </div>
 
           {/* Submit Button */}
           <Button
             type="submit"
             className="w-full bg-accent-cyan text-primary-dark font-semibold py-3 rounded-lg hover:bg-white button-glow transition-all duration-300 mt-6"
-            data-testid="button-signin"
+            data-testid="button-signup"
           >
-            Sign In
+            Create Account
           </Button>
         </form>
 
@@ -148,13 +209,13 @@ export default function Login() {
           </button>
         </div>
 
-        {/* Sign Up Link */}
+        {/* Sign In Link */}
         <div className="text-center mt-6">
           <p className="text-sm text-gray-300">
-            Don't have an account?{" "}
-            <Link href="/signup">
-              <a className="text-accent-cyan hover:underline transition-colors" data-testid="link-signup">
-                Create account
+            Already have an account?{" "}
+            <Link href="/login">
+              <a className="text-accent-cyan hover:underline transition-colors" data-testid="link-signin">
+                Sign in
               </a>
             </Link>
           </p>
