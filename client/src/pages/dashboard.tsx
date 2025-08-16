@@ -5,163 +5,8 @@ import Sidebar from "@/components/sidebar";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import backgroundImage from "@assets/Blue and Black Modern Technology Presentation_1755117076617.png";
-
-// Support ticket data matching the new professional schema
-const mockTickets = [
-  {
-    id: "ST-50101",
-    title: "Kensho Chart Explainer Missing Nuance",
-    product_area: "AI_Features",
-    user_persona: "Equity_Research_Associate",
-    client_firm_tier: 1,
-    priority: "medium",
-    status: "open",
-    assignee: {
-      name: "Sofia Chen",
-      avatar: "",
-      role: "AI Product Specialist"
-    },
-    responses: 3,
-    requester: 2,
-    timeAgo: "5 min",
-    progress: 35,
-    ticket_body: "The new 'Chart Explainer' AI feature is a great start, but it often misses key nuances in financial statements."
-  },
-  {
-    id: "ST-50102", 
-    title: "CRITICAL: Private Data Failing to Load in Model",
-    product_area: "Excel_Plugin",
-    user_persona: "Investment_Banking_Analyst",
-    client_firm_tier: 1,
-    priority: "urgent",
-    status: "escalated",
-    assignee: {
-      name: "Marcus Rodriguez",
-      avatar: "",
-      role: "Technical Support Lead"
-    },
-    responses: 8,
-    requester: 1,
-    timeAgo: "2 min",
-    progress: 75,
-    ticket_body: "Private company data from IHS Markit integration is not flowing into valuation models correctly via Excel Plug-in."
-  },
-  {
-    id: "ST-50103",
-    title: "ESG Screening for Labor Policies is Unintuitive", 
-    product_area: "Screening",
-    user_persona: "Portfolio_Manager",
-    client_firm_tier: 2,
-    priority: "high",
-    status: "open",
-    assignee: {
-      name: "Elena Kowalski",
-      avatar: "",
-      role: "ESG Data Analyst"
-    },
-    responses: 4,
-    requester: 3,
-    timeAgo: "1 hour",
-    progress: 20,
-    ticket_body: "Having difficulty screening for companies with specific ESG supply chain labor policies. Tool is not intuitive."
-  },
-  {
-    id: "ST-50104",
-    title: "API Endpoint Request for Point-in-Time Data",
-    product_area: "API", 
-    user_persona: "Quantitative_Analyst",
-    client_firm_tier: 1,
-    priority: "high",
-    status: "open",
-    assignee: {
-      name: "James Kim",
-      avatar: "",
-      role: "API Engineering"
-    },
-    responses: 2,
-    requester: 5,
-    timeAgo: "3 hours",
-    progress: 10,
-    ticket_body: "Need API endpoint to pull historical point-in-time fundamental data to avoid lookahead bias for custom risk model."
-  },
-  {
-    id: "ST-50105",
-    title: "Request for Bulk Sector Data Export for ML Training",
-    product_area: "Data_Exports",
-    user_persona: "Data_Scientist", 
-    client_firm_tier: 2,
-    priority: "medium",
-    status: "open",
-    assignee: {
-      name: "Dr. Sarah Patel",
-      avatar: "",
-      role: "Data Solutions Architect"
-    },
-    responses: 1,
-    requester: 4,
-    timeAgo: "6 hours",
-    progress: 5,
-    ticket_body: "Need bulk data exports for entire sector to build custom model for predicting earnings surprises."
-  },
-  {
-    id: "ST-50106",
-    title: "Bug with Copy/Paste in Kensho Document Search",
-    product_area: "AI_Features",
-    user_persona: "Investment_Banking_Analyst",
-    client_firm_tier: 3,
-    priority: "low", 
-    status: "closed",
-    assignee: {
-      name: "Alex Thompson",
-      avatar: "",
-      role: "Frontend Developer"
-    },
-    responses: 5,
-    requester: 0,
-    timeAgo: "1 day",
-    progress: 100,
-    ticket_body: "Kensho document search Copy to Clipboard function is buggy and doesn't preserve source link."
-  },
-  {
-    id: "ST-50107",
-    title: "API Latency Issues with Private Market Data",
-    product_area: "API",
-    user_persona: "Quantitative_Analyst",
-    client_firm_tier: 1,
-    priority: "high",
-    status: "open",
-    assignee: {
-      name: "David Zhang",
-      avatar: "",
-      role: "Infrastructure Engineer"
-    },
-    responses: 4,
-    requester: 5,
-    timeAgo: "1 day",
-    progress: 60,
-    ticket_body: "API endpoint for IHS private market funding rounds data is very slow and often times out."
-  },
-  {
-    id: "ST-50108",
-    title: "AI-Generated Competitive Summary from Transcripts",
-    product_area: "AI_Features",
-    user_persona: "Equity_Research_Associate",
-    client_firm_tier: 2,
-    priority: "medium",
-    status: "open",
-    assignee: {
-      name: "Dr. Lisa Wang",
-      avatar: "",
-      role: "AI Research Lead"
-    },
-    responses: 2,
-    requester: 3,
-    timeAgo: "2 days",
-    progress: 15,
-    ticket_body: "Request for Kensho: Can you build an AI tool that automatically generates competitive advantage summaries from earnings call transcripts?"
-  }
-];
+import { databaseService } from "@/services/databaseService";
+import type { SupportTicket } from "@/types/tickets";
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -217,9 +62,31 @@ interface Particle {
 }
 
 export default function Dashboard() {
+  const [tickets, setTickets] = useState<SupportTicket[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("assigned");
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Load real data from database
+  useEffect(() => {
+    const loadTickets = async () => {
+      try {
+        setLoading(true);
+        const realTickets = await databaseService.getTickets();
+        setTickets(realTickets);
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load tickets');
+        console.error('Failed to load tickets:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadTickets();
+  }, []);
 
   // Particle animation effect
   useEffect(() => {
@@ -303,21 +170,118 @@ export default function Dashboard() {
     animate()
   }, [])
 
-  const filteredTickets = mockTickets.filter(ticket =>
-    ticket.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    ticket.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    ticket.assignee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    ticket.product_area.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    ticket.user_persona.toLowerCase().includes(searchTerm.toLowerCase())
+  // Filter tickets based on search term and database data
+  const filteredTickets = tickets.filter(ticket =>
+    ticket.ticket_subject?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    ticket.ticket_body.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    ticket.ticket_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    ticket.product_area?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    ticket.user_persona?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const rawTicketsCount = mockTickets.length;
+  const rawTicketsCount = tickets.length;
 
-  const mentionedAI = mockTickets.filter(ticket => 
-    ticket.title.toLowerCase().includes('ai') || 
-    ticket.product_area.toLowerCase().includes('ai') ||
-    ticket.ticket_body.toLowerCase().includes('ai')
+  const mentionedAI = tickets.filter(ticket => 
+    ticket.ticket_subject?.toLowerCase().includes('ai') || 
+    ticket.product_area?.toLowerCase().includes('ai') ||
+    ticket.ticket_body.toLowerCase().includes('ai') ||
+    ticket.ticket_subject?.toLowerCase().includes('kensho') ||
+    ticket.ticket_body.toLowerCase().includes('kensho')
   ).length;
+
+  // Format timestamp to match original design
+  const formatTimeAgo = (timestamp: string) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+    
+    if (diffInHours < 1) return `${Math.floor(diffInHours * 60)} min`;
+    if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''}`;
+    return `${Math.floor(diffInHours / 24)} day${Math.floor(diffInHours / 24) > 1 ? 's' : ''}`;
+  };
+
+  // Generate assignee name from ticket data
+  const generateAssignee = (ticket: SupportTicket, index: number) => {
+    const assignees = [
+      { name: "Sofia Chen", role: "AI Product Specialist" },
+      { name: "Marcus Rodriguez", role: "Technical Support Lead" },
+      { name: "Elena Kowalski", role: "ESG Data Analyst" },
+      { name: "James Kim", role: "API Engineering" },
+      { name: "Dr. Sarah Patel", role: "Data Solutions Architect" },
+      { name: "Alex Thompson", role: "Frontend Developer" },
+      { name: "David Zhang", role: "Infrastructure Engineer" },
+      { name: "Dr. Lisa Wang", role: "AI Research Lead" }
+    ];
+    return assignees[index % assignees.length];
+  };
+
+  if (loading) {
+    return (
+      <div 
+        className="min-h-screen relative overflow-hidden bg-slate-900" 
+        data-testid="dashboard-page"
+      >
+        {/* Animated particles background */}
+        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-30" />
+        {/* Navigation */}
+        <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20">
+          <Navigation />
+        </div>
+        
+        {/* Sidebar */}
+        <Sidebar />
+        
+        {/* Loading Content */}
+        <div className="ml-16 pt-4">
+          <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20 py-6">
+            <div className="flex items-center justify-center h-96">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-cyan mx-auto"></div>
+                <p className="mt-4 text-white">Loading tickets from database...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div 
+        className="min-h-screen relative overflow-hidden bg-slate-900" 
+        data-testid="dashboard-page"
+      >
+        {/* Animated particles background */}
+        <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-30" />
+        {/* Navigation */}
+        <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20">
+          <Navigation />
+        </div>
+        
+        {/* Sidebar */}
+        <Sidebar />
+        
+        {/* Error Content */}
+        <div className="ml-16 pt-4">
+          <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20 py-6">
+            <div className="flex items-center justify-center h-96">
+              <div className="text-center">
+                <AlertCircle className="h-12 w-12 text-red-400 mx-auto" />
+                <p className="mt-4 text-red-400">Error loading tickets: {error}</p>
+                <button 
+                  onClick={() => window.location.reload()} 
+                  className="mt-4 px-4 py-2 bg-accent-cyan text-primary-dark rounded-lg hover:bg-accent-cyan/80 transition-colors"
+                >
+                  Retry
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div 
@@ -420,78 +384,79 @@ export default function Dashboard() {
 
           {/* Tickets Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
-              {filteredTickets.map((ticket, index) => (
-                <div 
-                  key={ticket.id}
-                  className="relative bg-[#092946]/50 border border-[#71FDFF]/30 rounded-2xl p-5 hover:border-[#71FDFF]/50 transition-all duration-300 backdrop-blur-sm"
-                  data-testid={`ticket-card-${index}`}
-                >
-                  {/* Status and Priority Header */}
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <Badge 
-                        variant="secondary" 
-                        className={`${getStatusColor(ticket.status)} text-white border-0 px-2 py-1 text-xs`}
-                      >
-                        {getStatusIcon(ticket.status)}
-                        <span className="ml-1">{ticket.status}</span>
-                      </Badge>
+              {filteredTickets.map((ticket, index) => {
+                const assignee = generateAssignee(ticket, index);
+                return (
+                  <div 
+                    key={ticket.ticket_id}
+                    className="relative bg-[#092946]/50 border border-[#71FDFF]/30 rounded-2xl p-5 hover:border-[#71FDFF]/50 transition-all duration-300 backdrop-blur-sm"
+                    data-testid={`ticket-card-${index}`}
+                  >
+                    {/* Status and Priority Header */}
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <Badge 
+                          variant="secondary" 
+                          className={`${getStatusColor(ticket.ticket_status)} text-white border-0 px-2 py-1 text-xs`}
+                        >
+                          {getStatusIcon(ticket.ticket_status)}
+                          <span className="ml-1">{ticket.ticket_status}</span>
+                        </Badge>
+                      </div>
+                      <span className={`text-xs font-medium ${getPriorityColor(ticket.ticket_priority)}`}>
+                        {ticket.ticket_priority}
+                      </span>
                     </div>
-                    <span className={`text-xs font-medium ${getPriorityColor(ticket.priority)}`}>
-                      {ticket.priority}
-                    </span>
-                  </div>
 
-                  {/* Ticket Title */}
-                  <h3 className="text-white font-medium text-sm mb-3 line-clamp-2">
-                    {ticket.title}
-                  </h3>
+                    {/* Ticket Title */}
+                    <h3 className="text-white font-medium text-sm mb-3 line-clamp-2">
+                      {ticket.ticket_subject || 'No Subject'}
+                    </h3>
 
-                  {/* Product Area & User Persona Info */}
-                  <div className="flex items-center gap-2 mb-3 text-xs text-gray-300">
-                    <AlertCircle className="w-3 h-3" />
-                    <span>{ticket.product_area.replace('_', ' ')}</span>
-                    <span>•</span>
-                    <span>{ticket.user_persona.replace('_', ' ')}</span>
-                    <span>•</span>
-                    <span className="text-accent-cyan">Tier {ticket.client_firm_tier}</span>
-                  </div>
+                    {/* Product Area & User Persona Info */}
+                    <div className="flex items-center gap-2 mb-3 text-xs text-gray-300">
+                      <AlertCircle className="w-3 h-3" />
+                      <span>{ticket.product_area?.replace('_', ' ') || 'Unknown'}</span>
+                      <span>•</span>
+                      <span>{ticket.user_persona?.replace('_', ' ') || 'Unknown'}</span>
+                      <span>•</span>
+                      <span className="text-accent-cyan">Tier {ticket.client_firm_tier}</span>
+                    </div>
 
-
-
-                  {/* Assignee */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Avatar className="w-6 h-6">
-                        <AvatarFallback className="bg-[#041420] text-accent-cyan text-xs font-medium">
-                          {ticket.assignee.name.split(' ').map(n => n[0]).join('')}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="text-white text-xs font-medium">
-                          {ticket.assignee.name}
+                    {/* Assignee */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Avatar className="w-6 h-6">
+                          <AvatarFallback className="bg-[#041420] text-accent-cyan text-xs font-medium">
+                            {assignee.name.split(' ').map(n => n[0]).join('')}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="text-white text-xs font-medium">
+                            {assignee.name}
+                          </div>
+                          <div className="text-gray-400 text-xs">
+                            {assignee.role}
+                          </div>
                         </div>
-                        <div className="text-gray-400 text-xs">
-                          {ticket.assignee.role}
+                      </div>
+                      <div className="absolute bottom-4 right-0">
+                        <div 
+                          className="bg-[#71FDFF] text-black px-4 py-1 text-xs font-medium"
+                          style={{
+                            borderTopLeftRadius: '8px',
+                            borderBottomLeftRadius: '8px',
+                            borderTopRightRadius: '0px',
+                            borderBottomRightRadius: '0px'
+                          }}
+                        >
+                          #{index + 1}
                         </div>
                       </div>
                     </div>
-                    <div className="absolute bottom-4 right-0">
-                      <div 
-                        className="bg-[#71FDFF] text-black px-4 py-1 text-xs font-medium"
-                        style={{
-                          borderTopLeftRadius: '8px',
-                          borderBottomLeftRadius: '8px',
-                          borderTopRightRadius: '0px',
-                          borderBottomRightRadius: '0px'
-                        }}
-                      >
-                        #{index + 1}
-                      </div>
-                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
         </div>
       </div>
