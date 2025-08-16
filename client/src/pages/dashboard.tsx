@@ -150,30 +150,30 @@ const mockTickets = [
 const getStatusColor = (status: string) => {
   switch (status) {
     case "AGENT":
-      return "bg-red-500";
+      return "bg-red-600";
     case "APPROVAL":
-      return "bg-gray-600";
+      return "bg-primary-dark";
     case "JIRA":
-      return "bg-gray-700";
+      return "bg-primary-dark border border-accent-cyan/30";
     case "SOLVED":
-      return "bg-green-500";
+      return "bg-green-600";
     default:
-      return "bg-gray-500";
+      return "bg-gray-600";
   }
 };
 
 const getPriorityColor = (priority: string) => {
   switch (priority) {
     case "Urgent":
-      return "text-red-500";
+      return "text-red-400";
     case "High":
-      return "text-orange-500";
+      return "text-orange-400";
     case "Medium":
-      return "text-yellow-500";
+      return "text-accent-cyan";
     case "Low":
-      return "text-green-500";
+      return "text-green-400";
     default:
-      return "text-gray-500";
+      return "text-gray-400";
   }
 };
 
@@ -237,10 +237,10 @@ export default function Dashboard() {
             {/* Assigned to Me Card */}
             <div className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-xl p-6">
               <div className="flex items-center justify-between mb-2">
-                <div className="w-8 h-8 bg-orange-500 rounded flex items-center justify-center">
-                  <User className="w-4 h-4 text-white" />
+                <div className="w-8 h-8 bg-accent-cyan rounded flex items-center justify-center">
+                  <User className="w-4 h-4 text-primary-dark" />
                 </div>
-                <span className="bg-orange-500 text-white text-xs px-2 py-1 rounded-full">
+                <span className="bg-accent-cyan text-primary-dark text-xs px-2 py-1 rounded-full font-medium">
                   {assignedToMe}
                 </span>
               </div>
@@ -251,7 +251,7 @@ export default function Dashboard() {
             {/* Additional Stats */}
             <div className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-xl p-4">
               <div className="flex items-center gap-3 mb-3">
-                <AlertCircle className="w-5 h-5 text-orange-500" />
+                <AlertCircle className="w-5 h-5 text-red-400" />
                 <span className="text-white text-sm">Active Issues</span>
               </div>
               <div className="text-2xl font-bold text-white">12</div>
@@ -259,7 +259,7 @@ export default function Dashboard() {
 
             <div className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-xl p-4">
               <div className="flex items-center gap-3 mb-3">
-                <CheckCircle className="w-5 h-5 text-green-500" />
+                <CheckCircle className="w-5 h-5 text-green-400" />
                 <span className="text-white text-sm">Resolved Today</span>
               </div>
               <div className="text-2xl font-bold text-white">8</div>
@@ -330,9 +330,9 @@ export default function Dashboard() {
                       <span>Req {ticket.requester}</span>
                       <span>{ticket.timeAgo}</span>
                     </div>
-                    <div className="w-full bg-gray-600 rounded-full h-1.5">
+                    <div className="w-full bg-primary-dark/50 rounded-full h-1.5">
                       <div 
-                        className="bg-orange-500 h-1.5 rounded-full transition-all"
+                        className="bg-accent-cyan h-1.5 rounded-full transition-all"
                         style={{ width: `${ticket.progress}%` }}
                       />
                     </div>
@@ -342,7 +342,7 @@ export default function Dashboard() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Avatar className="w-6 h-6">
-                        <AvatarFallback className="bg-gray-600 text-white text-xs">
+                        <AvatarFallback className="bg-primary-dark text-accent-cyan text-xs font-medium">
                           {ticket.assignee.name.split(' ').map(n => n[0]).join('')}
                         </AvatarFallback>
                       </Avatar>
