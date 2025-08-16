@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Navigation from "@/components/navigation";
 import { Link } from "wouter";
-import backgroundImage from "@assets/Blue White Modern Artificial Intelligence Video-4_1755117300086.png";
+import backgroundImage from "@assets/Blue and Black Modern Technology Presentation_1755316044717.png";
 
 export default function Signup() {
   const [formData, setFormData] = useState({
