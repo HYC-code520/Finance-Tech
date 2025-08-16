@@ -202,11 +202,13 @@ export default function Dashboard() {
     ticket.assignee.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const assignedToMe = mockTickets.filter(ticket => 
-    ticket.assignee.name === "Sofia Serrano"
-  ).length;
+  const rawTicketsCount = mockTickets.length;
 
-  const mentionedAI = 3; // Mock count for AI mentions
+  const mentionedAI = mockTickets.filter(ticket => 
+    ticket.title.toLowerCase().includes('ai') || 
+    ticket.category.toLowerCase().includes('ai') ||
+    (ticket.subcategory && ticket.subcategory.toLowerCase().includes('ai'))
+  ).length;
 
   return (
     <div 
@@ -275,7 +277,7 @@ export default function Dashboard() {
                       ? "bg-accent-cyan text-primary-dark"
                       : "bg-white/20 text-white"
                   }`}>
-                    {assignedToMe}
+                    {rawTicketsCount}
                   </span>
                 </button>
 
@@ -297,13 +299,15 @@ export default function Dashboard() {
                   <div>
                     <div className="text-white text-xs font-medium">Mentioned AI</div>
                   </div>
-                  <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                    activeTab === "mentioned"
-                      ? "bg-accent-cyan text-primary-dark"
-                      : "bg-white/20 text-white"
-                  }`}>
-                    {mentionedAI}
-                  </span>
+                  {mentionedAI > 0 && (
+                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                      activeTab === "mentioned"
+                        ? "bg-accent-cyan text-primary-dark"
+                        : "bg-white/20 text-white"
+                    }`}>
+                      {mentionedAI}
+                    </span>
+                  )}
                 </button>
               </div>
             </div>
