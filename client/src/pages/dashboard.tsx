@@ -246,12 +246,10 @@ export default function Dashboard() {
 
         {/* Dashboard Content */}
         <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20 py-6">
-          {/* Header Section */}
-          <div className="flex flex-col lg:flex-row gap-6 mb-8">
           
-          {/* Left Sidebar - Horizontal Tabs */}
-          <div className="w-full lg:w-64">
-            <div className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-xl overflow-hidden">
+          {/* Horizontal Tabs */}
+          <div className="mb-6">
+            <div className="max-w-md backdrop-blur-lg bg-white/10 border border-white/20 rounded-xl overflow-hidden">
               {/* Tab Headers */}
               <div className="flex border-b border-white/10">
                 <button
@@ -314,7 +312,7 @@ export default function Dashboard() {
                 {activeTab === "assigned" && (
                   <div className="text-center">
                     <div className="text-2xl font-bold text-white mb-1">{assignedToMe}</div>
-                    <div className="text-gray-300 text-xs">Assigned to me</div>
+                    <div className="text-gray-300 text-xs">tickets</div>
                   </div>
                 )}
                 {activeTab === "mentioned" && (
@@ -327,10 +325,8 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Main Content Area */}
-          <div className="flex-1">
-            {/* Tickets Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+          {/* Tickets Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
               {filteredTickets.map((ticket, index) => (
                 <div 
                   key={ticket.id}
@@ -406,8 +402,6 @@ export default function Dashboard() {
                 </div>
               ))}
             </div>
-          </div>
-        </div>
         </div>
       </div>
     </div>
