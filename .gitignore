@@ -11,3 +11,7 @@ replit.nix
 .upm
 .breakpoints
 .replit.toml
+
+#VScode
+.github
+.clinerules
