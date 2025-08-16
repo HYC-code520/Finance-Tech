@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link } from "wouter";
+import { ArrowLeft } from "lucide-react";
 import backgroundImage from "@assets/Blue White Modern Artificial Intelligence Video-4_1755117300086.png";
 
 export default function Login() {
@@ -28,7 +29,7 @@ export default function Login() {
 
   return (
     <div 
-      className="min-h-screen relative overflow-hidden flex items-center justify-center" 
+      className="min-h-screen relative overflow-hidden" 
       style={{
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
@@ -38,14 +39,28 @@ export default function Login() {
       data-testid="login-page"
     >
 
+      {/* Back to Home Button */}
+      <div className="absolute top-8 left-8 z-40">
+        <Link href="/">
+          <Button 
+            className="bg-white/10 backdrop-blur-sm border border-white/30 text-white px-4 py-2 rounded-lg hover:bg-white/20 transition-all duration-300 flex items-center gap-2"
+            data-testid="back-to-home"
+          >
+            <ArrowLeft size={16} />
+            Back to Home
+          </Button>
+        </Link>
+      </div>
+
       {/* Floating particles/stars */}
       <div className="absolute top-10 left-20 w-2 h-2 bg-accent-cyan rounded-full animate-pulse z-20" />
       <div className="absolute top-32 right-32 w-3 h-3 bg-white rounded-full animate-pulse-slow z-20" />
       <div className="absolute bottom-40 left-16 w-2 h-2 bg-accent-cyan rounded-full animate-glow z-20" />
       <div className="absolute top-20 right-20 w-4 h-4 bg-white opacity-60 transform rotate-45 z-20" style={{clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)"}} />
 
-      {/* Glassmorphism Login Form Container */}
-      <div className="relative z-30 w-full max-w-md mx-4 backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl p-8 shadow-2xl">
+      {/* Login Form Container - Centered */}
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="relative z-30 w-full max-w-md mx-4 backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl p-8 shadow-2xl">
 
         {/* Welcome Text */}
         <div className="text-center mb-8">
@@ -190,13 +205,6 @@ export default function Login() {
           </button>
         </div>
 
-        {/* Back to Home */}
-        <div className="text-center mt-6">
-          <Link href="/">
-            <a className="text-gray-400 hover:text-accent-cyan text-sm transition-colors" data-testid="link-home">
-              ← Back to Home
-            </a>
-          </Link>
         </div>
       </div>
     </div>
