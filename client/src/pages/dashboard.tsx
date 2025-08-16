@@ -7,155 +7,169 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import backgroundImage from "@assets/Blue and Black Modern Technology Presentation_1755117076617.png";
 
-// Mock support ticket data
+// Support ticket data matching the new professional schema
 const mockTickets = [
   {
-    id: "#2460",
-    title: "Can't connect to remote MySQL",
-    category: "Report a problem",
-    subcategory: "PC / Laptops",
-    priority: "Urgent",
-    status: "AGENT",
+    id: "ST-50101",
+    title: "Kensho Chart Explainer Missing Nuance",
+    product_area: "AI_Features",
+    user_persona: "Equity_Research_Associate",
+    client_firm_tier: 1,
+    priority: "medium",
+    status: "open",
     assignee: {
-      name: "Sofia Serrano",
+      name: "Sofia Chen",
       avatar: "",
-      role: "Developer"
-    },
-    responses: 4,
-    requester: 6,
-    timeAgo: "5 min",
-    progress: 65
-  },
-  {
-    id: "#2448",
-    title: "My computer doesn't work",
-    category: "My devices",
-    subcategory: "PC / Laptops", 
-    priority: "Low",
-    status: "AGENT",
-    assignee: {
-      name: "Daniela Gonzalez",
-      avatar: "",
-      role: "HR"
-    },
-    responses: 6,
-    requester: 8,
-    timeAgo: "2 min",
-    progress: 45
-  },
-  {
-    id: "#2447",
-    title: "Windows license has expired",
-    category: "Report a problem",
-    subcategory: "Licenses",
-    priority: "Medium",
-    status: "APPROVAL",
-    assignee: {
-      name: "Travis Garcia",
-      avatar: "",
-      role: "Architect"
-    },
-    responses: 4,
-    requester: 6,
-    timeAgo: "1 day",
-    progress: 80
-  },
-  {
-    id: "#44",
-    title: "Can't connect to remote MySQL",
-    category: "Report a problem", 
-    subcategory: "My devices",
-    priority: "Low",
-    status: "JIRA",
-    assignee: {
-      name: "Sofia Serrano",
-      avatar: "",
-      role: "Developer"
-    },
-    responses: 6,
-    requester: 8,
-    timeAgo: "3 days",
-    progress: 90
-  },
-  {
-    id: "#2505",
-    title: "I need to install an Antivirus",
-    category: "I have a question",
-    subcategory: "",
-    priority: "Low",
-    status: "SOLVED",
-    assignee: {
-      name: "Anne Flits",
-      avatar: "",
-      role: "Architect"
+      role: "AI Product Specialist"
     },
     responses: 3,
-    requester: 0,
+    requester: 2,
     timeAgo: "5 min",
-    progress: 100
+    progress: 35,
+    ticket_body: "The new 'Chart Explainer' AI feature is a great start, but it often misses key nuances in financial statements."
   },
   {
-    id: "#2500",
-    title: "The client is not updating the info",
-    category: "My devices",
-    subcategory: "PC / Laptops",
-    priority: "High",
-    status: "AGENT",
+    id: "ST-50102", 
+    title: "CRITICAL: Private Data Failing to Load in Model",
+    product_area: "Excel_Plugin",
+    user_persona: "Investment_Banking_Analyst",
+    client_firm_tier: 1,
+    priority: "urgent",
+    status: "escalated",
     assignee: {
-      name: "John Thomas",
+      name: "Marcus Rodriguez",
       avatar: "",
-      role: "PR"
-    },
-    responses: 3,
-    requester: 6,
-    timeAgo: "6 min",
-    progress: 30
-  },
-  {
-    id: "#2514",
-    title: "Email Account is Blocked",
-    category: "Report a problem",
-    subcategory: "Access / Internet",
-    priority: "Medium",
-    status: "AGENT",
-    assignee: {
-      name: "Travis Garcia",
-      avatar: "",
-      role: "Architect"
-    },
-    responses: 4,
-    requester: 5,
-    timeAgo: "1 day",
-    progress: 60
-  },
-  {
-    id: "#2417",
-    title: "Can't connect to remote MySQL",
-    category: "Report a problem",
-    subcategory: "",
-    priority: "Medium",
-    status: "AGENT",
-    assignee: {
-      name: "Nathan Panzrama",
-      avatar: "",
-      role: "On vacation"
+      role: "Technical Support Lead"
     },
     responses: 8,
+    requester: 1,
+    timeAgo: "2 min",
+    progress: 75,
+    ticket_body: "Private company data from IHS Markit integration is not flowing into valuation models correctly via Excel Plug-in."
+  },
+  {
+    id: "ST-50103",
+    title: "ESG Screening for Labor Policies is Unintuitive", 
+    product_area: "Screening",
+    user_persona: "Portfolio_Manager",
+    client_firm_tier: 2,
+    priority: "high",
+    status: "open",
+    assignee: {
+      name: "Elena Kowalski",
+      avatar: "",
+      role: "ESG Data Analyst"
+    },
+    responses: 4,
+    requester: 3,
+    timeAgo: "1 hour",
+    progress: 20,
+    ticket_body: "Having difficulty screening for companies with specific ESG supply chain labor policies. Tool is not intuitive."
+  },
+  {
+    id: "ST-50104",
+    title: "API Endpoint Request for Point-in-Time Data",
+    product_area: "API", 
+    user_persona: "Quantitative_Analyst",
+    client_firm_tier: 1,
+    priority: "high",
+    status: "open",
+    assignee: {
+      name: "James Kim",
+      avatar: "",
+      role: "API Engineering"
+    },
+    responses: 2,
     requester: 5,
-    timeAgo: "47 days",
-    progress: 25
+    timeAgo: "3 hours",
+    progress: 10,
+    ticket_body: "Need API endpoint to pull historical point-in-time fundamental data to avoid lookahead bias for custom risk model."
+  },
+  {
+    id: "ST-50105",
+    title: "Request for Bulk Sector Data Export for ML Training",
+    product_area: "Data_Exports",
+    user_persona: "Data_Scientist", 
+    client_firm_tier: 2,
+    priority: "medium",
+    status: "open",
+    assignee: {
+      name: "Dr. Sarah Patel",
+      avatar: "",
+      role: "Data Solutions Architect"
+    },
+    responses: 1,
+    requester: 4,
+    timeAgo: "6 hours",
+    progress: 5,
+    ticket_body: "Need bulk data exports for entire sector to build custom model for predicting earnings surprises."
+  },
+  {
+    id: "ST-50106",
+    title: "Bug with Copy/Paste in Kensho Document Search",
+    product_area: "AI_Features",
+    user_persona: "Investment_Banking_Analyst",
+    client_firm_tier: 3,
+    priority: "low", 
+    status: "closed",
+    assignee: {
+      name: "Alex Thompson",
+      avatar: "",
+      role: "Frontend Developer"
+    },
+    responses: 5,
+    requester: 0,
+    timeAgo: "1 day",
+    progress: 100,
+    ticket_body: "Kensho document search Copy to Clipboard function is buggy and doesn't preserve source link."
+  },
+  {
+    id: "ST-50107",
+    title: "API Latency Issues with Private Market Data",
+    product_area: "API",
+    user_persona: "Quantitative_Analyst",
+    client_firm_tier: 1,
+    priority: "high",
+    status: "open",
+    assignee: {
+      name: "David Zhang",
+      avatar: "",
+      role: "Infrastructure Engineer"
+    },
+    responses: 4,
+    requester: 5,
+    timeAgo: "1 day",
+    progress: 60,
+    ticket_body: "API endpoint for IHS private market funding rounds data is very slow and often times out."
+  },
+  {
+    id: "ST-50108",
+    title: "AI-Generated Competitive Summary from Transcripts",
+    product_area: "AI_Features",
+    user_persona: "Equity_Research_Associate",
+    client_firm_tier: 2,
+    priority: "medium",
+    status: "open",
+    assignee: {
+      name: "Dr. Lisa Wang",
+      avatar: "",
+      role: "AI Research Lead"
+    },
+    responses: 2,
+    requester: 3,
+    timeAgo: "2 days",
+    progress: 15,
+    ticket_body: "Request for Kensho: Can you build an AI tool that automatically generates competitive advantage summaries from earnings call transcripts?"
   }
 ];
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case "AGENT":
+    case "open":
+      return "bg-blue-600";
+    case "escalated":
       return "bg-red-600";
-    case "APPROVAL":
-      return "bg-primary-dark";
-    case "JIRA":
-      return "bg-primary-dark border border-accent-cyan/30";
-    case "SOLVED":
+    case "closed":
       return "bg-green-600";
     default:
       return "bg-gray-600";
@@ -164,13 +178,13 @@ const getStatusColor = (status: string) => {
 
 const getPriorityColor = (priority: string) => {
   switch (priority) {
-    case "Urgent":
+    case "urgent":
       return "text-red-400";
-    case "High":
+    case "high":
       return "text-orange-400";
-    case "Medium":
+    case "medium":
       return "text-accent-cyan";
-    case "Low":
+    case "low":
       return "text-green-400";
     default:
       return "text-gray-400";
@@ -179,13 +193,11 @@ const getPriorityColor = (priority: string) => {
 
 const getStatusIcon = (status: string) => {
   switch (status) {
-    case "AGENT":
+    case "open":
       return <AlertCircle className="w-4 h-4" />;
-    case "APPROVAL":
+    case "escalated":
       return <Clock className="w-4 h-4" />;
-    case "JIRA":
-      return <User className="w-4 h-4" />;
-    case "SOLVED":
+    case "closed":
       return <CheckCircle className="w-4 h-4" />;
     default:
       return <XCircle className="w-4 h-4" />;
@@ -294,15 +306,17 @@ export default function Dashboard() {
   const filteredTickets = mockTickets.filter(ticket =>
     ticket.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     ticket.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    ticket.assignee.name.toLowerCase().includes(searchTerm.toLowerCase())
+    ticket.assignee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    ticket.product_area.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    ticket.user_persona.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const rawTicketsCount = mockTickets.length;
 
   const mentionedAI = mockTickets.filter(ticket => 
     ticket.title.toLowerCase().includes('ai') || 
-    ticket.category.toLowerCase().includes('ai') ||
-    (ticket.subcategory && ticket.subcategory.toLowerCase().includes('ai'))
+    ticket.product_area.toLowerCase().includes('ai') ||
+    ticket.ticket_body.toLowerCase().includes('ai')
   ).length;
 
   return (
@@ -433,16 +447,14 @@ export default function Dashboard() {
                     {ticket.title}
                   </h3>
 
-                  {/* Category Info */}
+                  {/* Product Area & User Persona Info */}
                   <div className="flex items-center gap-2 mb-3 text-xs text-gray-300">
                     <AlertCircle className="w-3 h-3" />
-                    <span>{ticket.category}</span>
-                    {ticket.subcategory && (
-                      <>
-                        <span>•</span>
-                        <span>{ticket.subcategory}</span>
-                      </>
-                    )}
+                    <span>{ticket.product_area.replace('_', ' ')}</span>
+                    <span>•</span>
+                    <span>{ticket.user_persona.replace('_', ' ')}</span>
+                    <span>•</span>
+                    <span className="text-accent-cyan">Tier {ticket.client_firm_tier}</span>
                   </div>
 
 
