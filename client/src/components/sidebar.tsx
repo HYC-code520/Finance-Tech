@@ -58,11 +58,6 @@ export default function Sidebar() {
                 <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                   {item.label}
                 </div>
-                
-                {/* Active Indicator */}
-                {isActive && (
-                  <div className="absolute -right-[1px] top-1/2 transform -translate-y-1/2 w-1 h-6 bg-cyan-400 rounded-l-full" />
-                )}
               </Link>
             );
           })}
