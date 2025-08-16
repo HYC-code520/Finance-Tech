@@ -30,7 +30,7 @@ export default function Navigation() {
                     ? "text-white"
                     : "text-gray-300 hover:text-accent-cyan"
                 }`}
-                data-testid={`nav-link-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
+                data-testid={`nav-link-${item.name.toLowerCase()}`}
               >
                 {item.name}
               </a>
