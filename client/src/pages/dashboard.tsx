@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Search, User, Clock, AlertCircle, CheckCircle, XCircle, Bot } from "lucide-react";
 import Navigation from "@/components/navigation";
 import Sidebar from "@/components/sidebar";
@@ -192,9 +192,94 @@ const getStatusIcon = (status: string) => {
   }
 };
 
+// Particle interface
+interface Particle {
+  x: number;
+  y: number;
+  size: number;
+  speedX: number;
+  speedY: number;
+  color: string;
+  update(): void;
+  draw(): void;
+}
+
 export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("assigned");
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Particle animation effect
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+
+    canvas.width = canvas.offsetWidth
+    canvas.height = canvas.offsetHeight
+
+    const particles: Particle[] = []
+    const particleCount = 100
+
+    class ParticleImpl implements Particle {
+      x: number
+      y: number
+      size: number
+      speedX: number
+      speedY: number
+      color: string
+
+      constructor() {
+        this.x = Math.random() * canvas.width
+        this.y = Math.random() * canvas.height
+        this.size = Math.random() * 3 + 1
+        this.speedX = (Math.random() - 0.5) * 0.5
+        this.speedY = (Math.random() - 0.5) * 0.5
+        this.color = `rgba(${Math.floor(Math.random() * 100) + 100}, ${Math.floor(Math.random() * 100) + 150}, ${Math.floor(Math.random() * 55) + 200}, ${Math.random() * 0.5 + 0.2})`
+      }
+
+      update() {
+        this.x += this.speedX
+        this.y += this.speedY
+
+        // Wrap around edges
+        if (this.x > canvas.width) this.x = 0
+        if (this.x < 0) this.x = canvas.width
+        if (this.y > canvas.height) this.y = 0
+        if (this.y < 0) this.y = canvas.height
+      }
+
+      draw() {
+        if (!ctx) return
+        ctx.fillStyle = this.color
+        ctx.beginPath()
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2)
+        ctx.fill()
+      }
+    }
+
+    // Create particles
+    for (let i = 0; i < particleCount; i++) {
+      particles.push(new ParticleImpl())
+    }
+
+    // Animation loop
+    function animate() {
+      if (!ctx || !canvas) return
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      for (const particle of particles) {
+        particle.update()
+        particle.draw()
+      }
+
+      requestAnimationFrame(animate)
+    }
+
+    animate()
+  }, [])
 
   const filteredTickets = mockTickets.filter(ticket =>
     ticket.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -215,6 +300,8 @@ export default function Dashboard() {
       className="min-h-screen relative overflow-hidden bg-slate-900" 
       data-testid="dashboard-page"
     >
+      {/* Animated particles background */}
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-30" />
       {/* Navigation */}
       <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20">
         <Navigation />
