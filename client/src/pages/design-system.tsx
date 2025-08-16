@@ -6,10 +6,12 @@ import Navigation from "@/components/navigation";
 export default function DesignSystem() {
   return (
     <div className="min-h-screen bg-primary-dark text-white" data-testid="design-system-page">
-      {/* Navigation */}
-      <Navigation />
-      
-      <div className="max-w-6xl mx-auto p-8">
+      {/* Content Layer */}
+      <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20">
+        {/* Navigation */}
+        <Navigation />
+        
+        <div className="max-w-6xl mx-auto py-8">
         {/* Header */}
         <div className="mb-12">
           <h1 className="text-4xl font-bold mb-4 title-glow">S&P Capital IQ Design System</h1>
@@ -364,6 +366,7 @@ export default function DesignSystem() {
         <footer className="text-center text-gray-400 pt-8 border-t border-gray-600">
           <p>S&P Capital IQ Design System - Maintain consistency across all components and pages</p>
         </footer>
+        </div>
       </div>
     </div>
   );
