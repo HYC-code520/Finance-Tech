@@ -224,20 +224,20 @@ export default function Dashboard() {
     const particleCount = 50
 
     class ParticleImpl implements Particle {
-      x: number
-      y: number
-      size: number
-      speedX: number
-      speedY: number
-      color: string
+      x: number = 0
+      y: number = 0
+      size: number = 0
+      speedX: number = 0
+      speedY: number = 0
+      color: string = ''
 
       constructor() {
         if (!canvas) return
         this.x = Math.random() * canvas.width
         this.y = Math.random() * canvas.height
         this.size = Math.random() * 30 + 10 // 10x bigger: was 3+1, now 30+10
-        this.speedX = (Math.random() - 0.5) * 0.5
-        this.speedY = (Math.random() - 0.5) * 0.5
+        this.speedX = (Math.random() - 0.5) * 2 // Increased speed from 0.5 to 2
+        this.speedY = (Math.random() - 0.5) * 2 // Increased speed from 0.5 to 2
         this.color = `rgba(${Math.floor(Math.random() * 100) + 100}, ${Math.floor(Math.random() * 100) + 150}, ${Math.floor(Math.random() * 55) + 200}, ${Math.random() * 0.3 + 0.1})`
       }
 
@@ -261,8 +261,8 @@ export default function Dashboard() {
         ctx.fillStyle = this.color
         ctx.beginPath()
         
-        // Create oval/ellipse shape instead of circle
-        ctx.ellipse(this.x, this.y, this.size, this.size * 0.6, 0, 0, Math.PI * 2)
+        // Create vertical oval/ellipse shape (height > width)
+        ctx.ellipse(this.x, this.y, this.size * 0.4, this.size, 0, 0, Math.PI * 2)
         ctx.fill()
         
         // Reset filter
