@@ -12,8 +12,7 @@ export default function Signup() {
     lastName: "",
     email: "",
     password: "",
-    confirmPassword: "",
-    company: ""
+    confirmPassword: ""
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,20 +97,7 @@ export default function Signup() {
             </div>
           </div>
 
-          {/* Company Field */}
-          <div>
-            <Label htmlFor="company" className="text-gray-300 text-sm">Company</Label>
-            <Input
-              id="company"
-              name="company"
-              type="text"
-              placeholder="Your Company"
-              value={formData.company}
-              onChange={handleInputChange}
-              className="bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-gray-300 focus:border-accent-cyan focus:ring-accent-cyan/30"
-              data-testid="input-company"
-            />
-          </div>
+
 
           {/* Email Field */}
           <div>
@@ -120,7 +106,7 @@ export default function Signup() {
               id="email"
               name="email"
               type="email"
-              placeholder="john.doe@company.com"
+              placeholder="john.doe@spglobal.com"
               value={formData.email}
               onChange={handleInputChange}
               className="bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-gray-300 focus:border-accent-cyan focus:ring-accent-cyan/30"
