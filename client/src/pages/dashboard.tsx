@@ -232,13 +232,13 @@ export default function Dashboard() {
         {/* Search Bar */}
         <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20 pt-4 pb-2">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-200 w-5 h-5" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5 z-10" />
             <Input
               type="text"
               placeholder="Search for users, groups, companies, articles, requests, admin options..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-gray-400 focus:border-accent-cyan focus:ring-accent-cyan/30"
+              className="pl-10 bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-white/40 focus:border-accent-cyan focus:ring-accent-cyan/30"
               data-testid="search-input"
             />
           </div>
