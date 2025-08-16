@@ -287,7 +287,7 @@ export default function Dashboard() {
               {filteredTickets.map((ticket, index) => (
                 <div 
                   key={ticket.id}
-                  className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-xl p-4 hover:bg-white/15 transition-colors"
+                  className="relative backdrop-blur-lg bg-white/10 border border-white/20 rounded-xl p-4 hover:bg-white/15 transition-colors"
                   data-testid={`ticket-card-${index}`}
                 >
                   {/* Status and Priority Header */}
@@ -355,9 +355,9 @@ export default function Dashboard() {
                         </div>
                       </div>
                     </div>
-                    <div className="relative">
+                    <div className="absolute bottom-0 right-0">
                       <div 
-                        className="bg-[#71FDFF] text-white px-3 py-1 text-xs font-medium"
+                        className="bg-[#71FDFF] text-black px-4 py-1 text-xs font-medium"
                         style={{
                           borderTopLeftRadius: '8px',
                           borderBottomLeftRadius: '8px',
