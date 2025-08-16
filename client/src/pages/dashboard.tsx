@@ -249,29 +249,28 @@ export default function Dashboard() {
           {/* Header Section */}
           <div className="flex flex-col lg:flex-row gap-6 mb-8">
           
-          {/* Left Sidebar - Vertical Tabs */}
+          {/* Left Sidebar - Horizontal Tabs */}
           <div className="w-full lg:w-64">
             <div className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-xl overflow-hidden">
               {/* Tab Headers */}
-              <div className="flex flex-col">
+              <div className="flex border-b border-white/10">
                 <button
                   onClick={() => setActiveTab("assigned")}
-                  className={`flex items-center gap-3 p-4 text-left transition-colors ${
+                  className={`flex-1 flex items-center justify-center gap-2 p-3 text-center transition-colors ${
                     activeTab === "assigned"
-                      ? "bg-accent-cyan/20 border-r-2 border-accent-cyan"
+                      ? "bg-accent-cyan/20 border-b-2 border-accent-cyan"
                       : "hover:bg-white/5"
                   }`}
                 >
-                  <div className={`w-8 h-8 rounded flex items-center justify-center ${
+                  <div className={`w-6 h-6 rounded flex items-center justify-center ${
                     activeTab === "assigned" ? "bg-accent-cyan" : "bg-white/20"
                   }`}>
-                    <User className={`w-4 h-4 ${
+                    <User className={`w-3 h-3 ${
                       activeTab === "assigned" ? "text-primary-dark" : "text-white"
                     }`} />
                   </div>
-                  <div className="flex-1">
-                    <div className="text-white text-sm font-medium">Assigned to Me</div>
-                    <div className="text-gray-300 text-xs">{assignedToMe} tickets</div>
+                  <div>
+                    <div className="text-white text-xs font-medium">Assigned</div>
                   </div>
                   <span className={`text-xs px-2 py-1 rounded-full font-medium ${
                     activeTab === "assigned"
@@ -284,22 +283,21 @@ export default function Dashboard() {
 
                 <button
                   onClick={() => setActiveTab("mentioned")}
-                  className={`flex items-center gap-3 p-4 text-left transition-colors ${
+                  className={`flex-1 flex items-center justify-center gap-2 p-3 text-center transition-colors ${
                     activeTab === "mentioned"
-                      ? "bg-accent-cyan/20 border-r-2 border-accent-cyan"
+                      ? "bg-accent-cyan/20 border-b-2 border-accent-cyan"
                       : "hover:bg-white/5"
                   }`}
                 >
-                  <div className={`w-8 h-8 rounded flex items-center justify-center ${
+                  <div className={`w-6 h-6 rounded flex items-center justify-center ${
                     activeTab === "mentioned" ? "bg-accent-cyan" : "bg-white/20"
                   }`}>
-                    <Bot className={`w-4 h-4 ${
+                    <Bot className={`w-3 h-3 ${
                       activeTab === "mentioned" ? "text-primary-dark" : "text-white"
                     }`} />
                   </div>
-                  <div className="flex-1">
-                    <div className="text-white text-sm font-medium">Mentioned AI</div>
-                    <div className="text-gray-300 text-xs">{mentionedAI} mentions</div>
+                  <div>
+                    <div className="text-white text-xs font-medium">AI</div>
                   </div>
                   <span className={`text-xs px-2 py-1 rounded-full font-medium ${
                     activeTab === "mentioned"
@@ -312,17 +310,17 @@ export default function Dashboard() {
               </div>
 
               {/* Tab Content */}
-              <div className="p-4 border-t border-white/10">
+              <div className="p-4">
                 {activeTab === "assigned" && (
-                  <div>
-                    <div className="text-3xl font-bold text-white mb-1">{assignedToMe}</div>
-                    <div className="text-gray-300 text-sm">Total assigned tickets</div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-white mb-1">{assignedToMe}</div>
+                    <div className="text-gray-300 text-xs">Assigned to me</div>
                   </div>
                 )}
                 {activeTab === "mentioned" && (
-                  <div>
-                    <div className="text-3xl font-bold text-white mb-1">{mentionedAI}</div>
-                    <div className="text-gray-300 text-sm">AI assistance requests</div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-white mb-1">{mentionedAI}</div>
+                    <div className="text-gray-300 text-xs">AI mentions</div>
                   </div>
                 )}
               </div>
