@@ -18,7 +18,6 @@ function Router() {
       <Route path="/design-system" component={DesignSystem} />
       <Route path="/about" component={() => <div className="min-h-screen gradient-bg text-white flex items-center justify-center"><h1 className="text-4xl">About Page - Coming Soon</h1></div>} />
       <Route path="/dashboard" component={() => <div className="min-h-screen gradient-bg text-white flex items-center justify-center"><h1 className="text-4xl">Dashboard - Coming Soon</h1></div>} />
-      <Route path="/others" component={() => <div className="min-h-screen gradient-bg text-white flex items-center justify-center"><h1 className="text-4xl">Others - Coming Soon</h1></div>} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
