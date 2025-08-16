@@ -29,7 +29,7 @@ export default function Sidebar() {
   const [location] = useLocation();
 
   return (
-    <div className="fixed left-0 top-20 h-[calc(100vh-5rem)] w-16 bg-gradient-to-b from-[#1a3a4a] to-[#0f2a3a] border-r border-white/10 z-40">
+    <div className="fixed left-0 top-20 h-[calc(100vh-5rem)] w-16 bg-gradient-to-b from-[#041420] to-[#0f2a3a] border-r border-white/10 z-40">
       <div className="flex flex-col items-center py-6 space-y-6">
         
         {/* Navigation Items */}
