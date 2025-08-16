@@ -1,26 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "wouter";
-import { ArrowLeft } from "lucide-react";
+import Navigation from "@/components/navigation";
 
 export default function DesignSystem() {
   return (
-    <div className="min-h-screen bg-primary-dark text-white p-8" data-testid="design-system-page">
-      <div className="max-w-6xl mx-auto">
-        {/* Back to Home Button */}
-        <div className="mb-8">
-          <Link href="/">
-            <Button 
-              className="bg-white/10 backdrop-blur-sm border border-white/30 text-white px-4 py-2 rounded-lg hover:bg-white/20 transition-all duration-300 flex items-center gap-2"
-              data-testid="back-to-home"
-            >
-              <ArrowLeft size={16} />
-              Back to Home
-            </Button>
-          </Link>
-        </div>
-
+    <div className="min-h-screen bg-primary-dark text-white" data-testid="design-system-page">
+      {/* Navigation */}
+      <Navigation />
+      
+      <div className="max-w-6xl mx-auto p-8">
         {/* Header */}
         <div className="mb-12">
           <h1 className="text-4xl font-bold mb-4 title-glow">S&P Capital IQ Design System</h1>

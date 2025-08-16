@@ -2,8 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "wouter";
-import { ArrowLeft } from "lucide-react";
+import Navigation from "@/components/navigation";
 import backgroundImage from "@assets/Blue White Modern Artificial Intelligence Video-4_1755117300086.png";
 
 export default function Login() {
@@ -38,19 +37,8 @@ export default function Login() {
       }}
       data-testid="login-page"
     >
-
-      {/* Back to Home Button */}
-      <div className="absolute top-8 left-8 z-40">
-        <Link href="/">
-          <Button 
-            className="bg-white/10 backdrop-blur-sm border border-white/30 text-white px-4 py-2 rounded-lg hover:bg-white/20 transition-all duration-300 flex items-center gap-2"
-            data-testid="back-to-home"
-          >
-            <ArrowLeft size={16} />
-            Back to Home
-          </Button>
-        </Link>
-      </div>
+      {/* Navigation */}
+      <Navigation />
 
       {/* Floating particles/stars */}
       <div className="absolute top-10 left-20 w-2 h-2 bg-accent-cyan rounded-full animate-pulse z-20" />
