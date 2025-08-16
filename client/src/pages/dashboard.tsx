@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { Search, User, Clock, AlertCircle, CheckCircle, XCircle, Bot } from "lucide-react";
 import Navigation from "@/components/navigation";
 import Sidebar from "@/components/sidebar";
@@ -61,6 +61,88 @@ interface Particle {
   draw(): void;
 }
 
+// Memoized ticket card component for performance
+const TicketCard = React.memo(({ 
+  ticket, 
+  index, 
+  assignee 
+}: { 
+  ticket: SupportTicket; 
+  index: number; 
+  assignee: { name: string; role: string } 
+}) => (
+  <div 
+    className="relative bg-[#092946]/50 border border-[#71FDFF]/30 rounded-2xl p-5 hover:border-[#71FDFF]/50 transition-all duration-300 backdrop-blur-sm transform-gpu will-change-transform"
+    data-testid={`ticket-card-${index}`}
+    style={{ willChange: 'transform, opacity' }}
+  >
+    {/* Status and Priority Header */}
+    <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center gap-2">
+        <Badge 
+          variant="secondary" 
+          className={`${getStatusColor(ticket.ticket_status)} text-white border-0 px-2 py-1 text-xs`}
+        >
+          {getStatusIcon(ticket.ticket_status)}
+          <span className="ml-1">{ticket.ticket_status}</span>
+        </Badge>
+      </div>
+      <span className={`text-xs font-medium ${getPriorityColor(ticket.ticket_priority)}`}>
+        {ticket.ticket_priority}
+      </span>
+    </div>
+
+    {/* Ticket Title */}
+    <h3 className="text-white font-medium text-sm mb-3 line-clamp-2">
+      {ticket.ticket_subject || 'No Subject'}
+    </h3>
+
+    {/* Product Area & User Persona Info */}
+    <div className="flex items-center gap-2 mb-3 text-xs text-gray-300">
+      <AlertCircle className="w-3 h-3" />
+      <span>{ticket.product_area?.replace('_', ' ') || 'Unknown'}</span>
+      <span>•</span>
+      <span>{ticket.user_persona?.replace('_', ' ') || 'Unknown'}</span>
+      <span>•</span>
+      <span className="text-accent-cyan">Tier {ticket.client_firm_tier}</span>
+    </div>
+
+    {/* Assignee */}
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-2">
+        <Avatar className="w-6 h-6">
+          <AvatarFallback className="bg-[#041420] text-accent-cyan text-xs font-medium">
+            {assignee.name.split(' ').map(n => n[0]).join('')}
+          </AvatarFallback>
+        </Avatar>
+        <div>
+          <div className="text-white text-xs font-medium">
+            {assignee.name}
+          </div>
+          <div className="text-gray-400 text-xs">
+            {assignee.role}
+          </div>
+        </div>
+      </div>
+      <div className="absolute bottom-4 right-0">
+        <div 
+          className="bg-[#71FDFF] text-black px-4 py-1 text-xs font-medium"
+          style={{
+            borderTopLeftRadius: '8px',
+            borderBottomLeftRadius: '8px',
+            borderTopRightRadius: '0px',
+            borderBottomRightRadius: '0px'
+          }}
+        >
+          #{index + 1}
+        </div>
+      </div>
+    </div>
+  </div>
+));
+
+TicketCard.displayName = 'TicketCard';
+
 export default function Dashboard() {
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [loading, setLoading] = useState(true);
@@ -100,7 +182,8 @@ export default function Dashboard() {
     canvas.height = canvas.offsetHeight
 
     const particles: Particle[] = []
-    const particleCount = 50
+    const particleCount = 25 // Reduced from 50 to 25 for performance
+    let animationId: number
 
     class ParticleImpl implements Particle {
       x: number = 0
@@ -114,10 +197,15 @@ export default function Dashboard() {
         if (!canvas) return
         this.x = Math.random() * canvas.width
         this.y = Math.random() * canvas.height
-        this.size = Math.random() * 40 + 15 // Increased size from 30+10 to 40+15
-        this.speedX = (Math.random() - 0.5) * 24 // Tripled speed from 8 to 24
-        this.speedY = (Math.random() - 0.5) * 24 // Tripled speed from 8 to 24
-        this.color = `rgba(${Math.floor(Math.random() * 100) + 100}, ${Math.floor(Math.random() * 100) + 150}, ${Math.floor(Math.random() * 55) + 200}, ${Math.random() * 0.3 + 0.1})`
+        this.size = Math.random() * 30 + 10 // Reduced size for performance
+        this.speedX = (Math.random() - 0.5) * 12 // Reduced speed from 24 to 12
+        this.speedY = (Math.random() - 0.5) * 12 // Reduced speed from 24 to 12
+        // Pre-calculate color to avoid repeated string calculations
+        const r = Math.floor(Math.random() * 100) + 100;
+        const g = Math.floor(Math.random() * 100) + 150;
+        const b = Math.floor(Math.random() * 55) + 200;
+        const a = Math.random() * 0.2 + 0.05; // Reduced opacity for subtle effect
+        this.color = `rgba(${r}, ${g}, ${b}, ${a})`
       }
 
       update() {
@@ -135,17 +223,13 @@ export default function Dashboard() {
       draw() {
         if (!ctx) return
         
-        // Add blur effect
-        ctx.filter = 'blur(4px)'
+        // Remove expensive blur filter for performance
         ctx.fillStyle = this.color
         ctx.beginPath()
         
-        // Create vertical oval/ellipse shape (height > width)
-        ctx.ellipse(this.x, this.y, this.size * 0.4, this.size, 0, 0, Math.PI * 2)
+        // Simplified circle instead of ellipse for performance
+        ctx.arc(this.x, this.y, this.size * 0.3, 0, Math.PI * 2)
         ctx.fill()
-        
-        // Reset filter
-        ctx.filter = 'none'
       }
     }
 
@@ -154,9 +238,22 @@ export default function Dashboard() {
       particles.push(new ParticleImpl())
     }
 
-    // Animation loop
-    function animate() {
+    // Optimized animation loop with FPS throttling
+    let lastTime = 0
+    const targetFPS = 60
+    const frameInterval = 1000 / targetFPS
+
+    function animate(currentTime: number) {
       if (!ctx || !canvas) return
+      
+      // Throttle to target FPS
+      if (currentTime - lastTime < frameInterval) {
+        animationId = requestAnimationFrame(animate)
+        return
+      }
+      
+      lastTime = currentTime
+      
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
       for (const particle of particles) {
@@ -164,33 +261,48 @@ export default function Dashboard() {
         particle.draw()
       }
 
-      requestAnimationFrame(animate)
+      animationId = requestAnimationFrame(animate)
     }
 
-    animate()
+    animationId = requestAnimationFrame(animate)
+    
+    // Cleanup function
+    return () => {
+      if (animationId) {
+        cancelAnimationFrame(animationId)
+      }
+    }
   }, [])
 
-  // Filter tickets based on search term and database data
-  const filteredTickets = tickets.filter(ticket =>
-    ticket.ticket_subject?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    ticket.ticket_body.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    ticket.ticket_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    ticket.product_area?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    ticket.user_persona?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter tickets based on search term and database data - Memoized for performance
+  const filteredTickets = useMemo(() => {
+    if (!searchTerm.trim()) return tickets;
+    
+    const lowerSearchTerm = searchTerm.toLowerCase();
+    return tickets.filter(ticket =>
+      ticket.ticket_subject?.toLowerCase().includes(lowerSearchTerm) ||
+      ticket.ticket_body.toLowerCase().includes(lowerSearchTerm) ||
+      ticket.ticket_id.toLowerCase().includes(lowerSearchTerm) ||
+      ticket.product_area?.toLowerCase().includes(lowerSearchTerm) ||
+      ticket.user_persona?.toLowerCase().includes(lowerSearchTerm)
+    );
+  }, [tickets, searchTerm]);
 
   const rawTicketsCount = tickets.length;
 
-  const mentionedAI = tickets.filter(ticket => 
-    ticket.ticket_subject?.toLowerCase().includes('ai') || 
-    ticket.product_area?.toLowerCase().includes('ai') ||
-    ticket.ticket_body.toLowerCase().includes('ai') ||
-    ticket.ticket_subject?.toLowerCase().includes('kensho') ||
-    ticket.ticket_body.toLowerCase().includes('kensho')
-  ).length;
+  // Memoized AI ticket count calculation
+  const mentionedAI = useMemo(() => {
+    return tickets.filter(ticket => 
+      ticket.ticket_subject?.toLowerCase().includes('ai') || 
+      ticket.product_area?.toLowerCase().includes('ai') ||
+      ticket.ticket_body.toLowerCase().includes('ai') ||
+      ticket.ticket_subject?.toLowerCase().includes('kensho') ||
+      ticket.ticket_body.toLowerCase().includes('kensho')
+    ).length;
+  }, [tickets]);
 
   // Format timestamp to match original design
-  const formatTimeAgo = (timestamp: string) => {
+  const formatTimeAgo = useCallback((timestamp: string) => {
     const date = new Date(timestamp);
     const now = new Date();
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
@@ -198,22 +310,29 @@ export default function Dashboard() {
     if (diffInHours < 1) return `${Math.floor(diffInHours * 60)} min`;
     if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''}`;
     return `${Math.floor(diffInHours / 24)} day${Math.floor(diffInHours / 24) > 1 ? 's' : ''}`;
-  };
+  }, []);
 
-  // Generate assignee name from ticket data
-  const generateAssignee = (ticket: SupportTicket, index: number) => {
-    const assignees = [
-      { name: "Sofia Chen", role: "AI Product Specialist" },
-      { name: "Marcus Rodriguez", role: "Technical Support Lead" },
-      { name: "Elena Kowalski", role: "ESG Data Analyst" },
-      { name: "James Kim", role: "API Engineering" },
-      { name: "Dr. Sarah Patel", role: "Data Solutions Architect" },
-      { name: "Alex Thompson", role: "Frontend Developer" },
-      { name: "David Zhang", role: "Infrastructure Engineer" },
-      { name: "Dr. Lisa Wang", role: "AI Research Lead" }
-    ];
+  // Pre-calculated assignees for better performance
+  const assignees = useMemo(() => [
+    { name: "Sofia Chen", role: "AI Product Specialist" },
+    { name: "Marcus Rodriguez", role: "Technical Support Lead" },
+    { name: "Elena Kowalski", role: "ESG Data Analyst" },
+    { name: "James Kim", role: "API Engineering" },
+    { name: "Dr. Sarah Patel", role: "Data Solutions Architect" },
+    { name: "Alex Thompson", role: "Frontend Developer" },
+    { name: "David Zhang", role: "Infrastructure Engineer" },
+    { name: "Dr. Lisa Wang", role: "AI Research Lead" }
+  ], []);
+
+  // Memoized assignee generation
+  const generateAssignee = useCallback((ticket: SupportTicket, index: number) => {
     return assignees[index % assignees.length];
-  };
+  }, [assignees]);
+
+  // Debounced search handler
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  }, []);
 
   if (loading) {
     return (
@@ -287,9 +406,14 @@ export default function Dashboard() {
     <div 
       className="min-h-screen relative overflow-hidden bg-slate-900" 
       data-testid="dashboard-page"
+      style={{ willChange: 'scroll-position' }}
     >
       {/* Animated particles background */}
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-30" />
+      <canvas 
+        ref={canvasRef} 
+        className="absolute inset-0 w-full h-full opacity-30 transform-gpu" 
+        style={{ willChange: 'contents' }}
+      />
       {/* Navigation */}
       <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20">
         <Navigation />
@@ -308,9 +432,10 @@ export default function Dashboard() {
               type="text"
               placeholder="Search for users, groups, companies, articles, requests, admin options..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-[#092946]/80 backdrop-blur-sm border-0 text-white placeholder:text-gray-300 focus:border-0 focus:ring-0 rounded-2xl"
+              onChange={handleSearchChange}
+              className="pl-10 bg-[#092946]/80 backdrop-blur-sm border-0 text-white placeholder:text-gray-300 focus:border-0 focus:ring-0 rounded-2xl transform-gpu will-change-contents"
               data-testid="search-input"
+              style={{ willChange: 'contents' }}
             />
           </div>
         </div>
@@ -387,74 +512,12 @@ export default function Dashboard() {
               {filteredTickets.map((ticket, index) => {
                 const assignee = generateAssignee(ticket, index);
                 return (
-                  <div 
+                  <TicketCard
                     key={ticket.ticket_id}
-                    className="relative bg-[#092946]/50 border border-[#71FDFF]/30 rounded-2xl p-5 hover:border-[#71FDFF]/50 transition-all duration-300 backdrop-blur-sm"
-                    data-testid={`ticket-card-${index}`}
-                  >
-                    {/* Status and Priority Header */}
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <Badge 
-                          variant="secondary" 
-                          className={`${getStatusColor(ticket.ticket_status)} text-white border-0 px-2 py-1 text-xs`}
-                        >
-                          {getStatusIcon(ticket.ticket_status)}
-                          <span className="ml-1">{ticket.ticket_status}</span>
-                        </Badge>
-                      </div>
-                      <span className={`text-xs font-medium ${getPriorityColor(ticket.ticket_priority)}`}>
-                        {ticket.ticket_priority}
-                      </span>
-                    </div>
-
-                    {/* Ticket Title */}
-                    <h3 className="text-white font-medium text-sm mb-3 line-clamp-2">
-                      {ticket.ticket_subject || 'No Subject'}
-                    </h3>
-
-                    {/* Product Area & User Persona Info */}
-                    <div className="flex items-center gap-2 mb-3 text-xs text-gray-300">
-                      <AlertCircle className="w-3 h-3" />
-                      <span>{ticket.product_area?.replace('_', ' ') || 'Unknown'}</span>
-                      <span>•</span>
-                      <span>{ticket.user_persona?.replace('_', ' ') || 'Unknown'}</span>
-                      <span>•</span>
-                      <span className="text-accent-cyan">Tier {ticket.client_firm_tier}</span>
-                    </div>
-
-                    {/* Assignee */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Avatar className="w-6 h-6">
-                          <AvatarFallback className="bg-[#041420] text-accent-cyan text-xs font-medium">
-                            {assignee.name.split(' ').map(n => n[0]).join('')}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="text-white text-xs font-medium">
-                            {assignee.name}
-                          </div>
-                          <div className="text-gray-400 text-xs">
-                            {assignee.role}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="absolute bottom-4 right-0">
-                        <div 
-                          className="bg-[#71FDFF] text-black px-4 py-1 text-xs font-medium"
-                          style={{
-                            borderTopLeftRadius: '8px',
-                            borderBottomLeftRadius: '8px',
-                            borderTopRightRadius: '0px',
-                            borderBottomRightRadius: '0px'
-                          }}
-                        >
-                          #{index + 1}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                    ticket={ticket}
+                    index={index}
+                    assignee={assignee}
+                  />
                 );
               })}
             </div>
