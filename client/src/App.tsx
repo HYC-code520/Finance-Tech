@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/home";
 import Login from "@/pages/login";
+import DesignSystem from "@/pages/design-system";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -12,6 +13,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/login" component={Login} />
+      <Route path="/design-system" component={DesignSystem} />
       <Route path="/about" component={() => <div className="min-h-screen gradient-bg text-white flex items-center justify-center"><h1 className="text-4xl">About Page - Coming Soon</h1></div>} />
       <Route path="/dashboard" component={() => <div className="min-h-screen gradient-bg text-white flex items-center justify-center"><h1 className="text-4xl">Dashboard - Coming Soon</h1></div>} />
       <Route path="/others" component={() => <div className="min-h-screen gradient-bg text-white flex items-center justify-center"><h1 className="text-4xl">Others - Coming Soon</h1></div>} />
