@@ -206,24 +206,26 @@ export default function Dashboard() {
   ).length;
 
   return (
-    <div className="min-h-screen flex">
-      {/* Sidebar */}
-      <Sidebar />
-      
-      {/* Main Content */}
-      <div 
-        className="flex-1 ml-16 min-h-screen relative overflow-hidden" 
-        style={{
-          backgroundImage: `url(${backgroundImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
-        data-testid="dashboard-page"
-      >
-        {/* Navigation */}
-        <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20">
-          <Navigation />
+    <div 
+      className="min-h-screen relative overflow-hidden" 
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+      data-testid="dashboard-page"
+    >
+      {/* Navigation */}
+      <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20">
+        <Navigation />
+      </div>
+
+      {/* Layout with Sidebar */}
+      <div className="flex">
+        {/* Sidebar */}
+        <div className="relative">
+          <Sidebar />
         </div>
 
         {/* Dashboard Content */}
