@@ -8,6 +8,7 @@ import Login from "@/pages/login";
 import Signup from "@/pages/signup";
 import DesignSystem from "@/pages/design-system";
 import NotFound from "@/pages/not-found";
+import Navigation from "@/components/navigation";
 
 function Router() {
   return (
@@ -16,8 +17,22 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
       <Route path="/design-system" component={DesignSystem} />
-      <Route path="/about" component={() => <div className="min-h-screen gradient-bg text-white flex items-center justify-center"><h1 className="text-4xl">About Page - Coming Soon</h1></div>} />
-      <Route path="/dashboard" component={() => <div className="min-h-screen gradient-bg text-white flex items-center justify-center"><h1 className="text-4xl">Dashboard - Coming Soon</h1></div>} />
+      <Route path="/about" component={() => (
+        <div className="min-h-screen gradient-bg text-white">
+          <Navigation />
+          <div className="flex items-center justify-center h-screen">
+            <h1 className="text-4xl">About Page - Coming Soon</h1>
+          </div>
+        </div>
+      )} />
+      <Route path="/dashboard" component={() => (
+        <div className="min-h-screen gradient-bg text-white">
+          <Navigation />
+          <div className="flex items-center justify-center h-screen">
+            <h1 className="text-4xl">Dashboard - Coming Soon</h1>
+          </div>
+        </div>
+      )} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
