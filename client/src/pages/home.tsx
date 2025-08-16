@@ -18,7 +18,6 @@ export default function Home() {
         <source src={videoBackground} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
-
       {/* Gradient overlay from left (dark blue) to right (transparent) */}
       <div 
         className="absolute top-0 left-0 w-full h-full z-10" 
@@ -27,9 +26,8 @@ export default function Home() {
         }}
         data-testid="gradient-overlay" 
       />
-
       {/* Content Layer */}
-      <div className="relative z-20">
+      <div className="relative z-20 ml-[20px] mr-[20px]">
         {/* Navigation */}
         <Navigation />
 
