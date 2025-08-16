@@ -402,3 +402,20 @@ html {
   scrollbar-width: thin;
   scrollbar-color: #71FDFF #092946;
 }
+
+/* Remove borders from input fields completely */
+input[type="text"],
+input[type="email"], 
+input[type="password"] {
+  border: none !important;
+  outline: none !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+  border: none !important;
+  outline: none !important;
+  ring: 2px solid rgba(113, 253, 255, 0.3) !important;
+}
