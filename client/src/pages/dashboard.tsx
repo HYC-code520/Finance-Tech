@@ -238,7 +238,7 @@ export default function Dashboard() {
               placeholder="Search for users, groups, companies, articles, requests, admin options..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-white/40 focus:border-accent-cyan focus:ring-accent-cyan/30"
+              className="pl-10 bg-white/10 backdrop-blur-sm border-white/30 text-white placeholder-gray-300 focus:border-accent-cyan focus:ring-accent-cyan/30"
               data-testid="search-input"
             />
           </div>
