@@ -8,7 +8,7 @@ export default function HeroSection() {
   };
 
   return (
-    <main className="flex-1 flex items-center px-8 lg:px-16 py-16 ml-[50px] mr-[50px]" data-testid="hero-section">
+    <main className="flex-1 flex items-center px-8 lg:px-16 py-16 ml-[100px] mr-[100px]" data-testid="hero-section">
       <div className="max-w-4xl">
         {/* Decorative Tech Line Top */}
         <DecorativeLine width="w-96" className="mb-8" />
