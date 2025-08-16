@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,23 +6,11 @@ import { Link } from "wouter";
 import Navigation from "@/components/navigation";
 import backgroundImage from "@assets/Blue and Black Modern Technology Presentation_1755316044717.png";
 
-interface Particle {
-  x: number;
-  y: number;
-  sizeX: number;
-  sizeY: number;
-  speedX: number;
-  speedY: number;
-  color: string;
-}
-
 export default function Login() {
   const [formData, setFormData] = useState({
     email: "",
     password: ""
   });
-  
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData(prev => ({
@@ -36,96 +24,6 @@ export default function Login() {
     console.log("Login form submitted:", formData);
   };
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
-
-    const particles: ParticleClass[] = [];
-    const particleCount = 80;
-
-    class ParticleClass {
-      x: number;
-      y: number;
-      sizeX: number;
-      sizeY: number;
-      speedX: number;
-      speedY: number;
-      color: string;
-
-      constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.sizeX = Math.random() * 15 + 8; // Larger oval width
-        this.sizeY = Math.random() * 8 + 4;  // Smaller oval height
-        this.speedX = (Math.random() - 0.5) * 0.3;
-        this.speedY = (Math.random() - 0.5) * 0.3;
-        this.color = `rgba(${Math.floor(Math.random() * 100) + 100}, ${Math.floor(Math.random() * 100) + 150}, ${Math.floor(Math.random() * 55) + 200}, ${Math.random() * 0.3 + 0.1})`;
-      }
-
-      update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-
-        // Wrap around edges
-        if (this.x > canvas.width) this.x = 0;
-        if (this.x < 0) this.x = canvas.width;
-        if (this.y > canvas.height) this.y = 0;
-        if (this.y < 0) this.y = canvas.height;
-      }
-
-      draw() {
-        if (!ctx) return;
-        
-        // Create gradient for feathered edges
-        const gradient = ctx.createRadialGradient(
-          this.x, this.y, 0,
-          this.x, this.y, Math.max(this.sizeX, this.sizeY)
-        );
-        gradient.addColorStop(0, this.color);
-        gradient.addColorStop(0.7, this.color.replace(/[\d\.]+\)$/g, '0.1)'));
-        gradient.addColorStop(1, this.color.replace(/[\d\.]+\)$/g, '0)'));
-        
-        ctx.fillStyle = gradient;
-        ctx.beginPath();
-        ctx.ellipse(this.x, this.y, this.sizeX, this.sizeY, 0, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-
-    for (let i = 0; i < particleCount; i++) {
-      particles.push(new ParticleClass());
-    }
-
-    function animate() {
-      if (!ctx || !canvas) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      for (const particle of particles) {
-        particle.update();
-        particle.draw();
-      }
-
-      requestAnimationFrame(animate);
-    }
-
-    animate();
-
-    // Handle resize
-    const handleResize = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
   return (
     <div 
       className="min-h-screen relative overflow-hidden" 
@@ -137,9 +35,6 @@ export default function Login() {
       }}
       data-testid="login-page"
     >
-      {/* Particle Animation Canvas */}
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-30 z-10" />
-      
       {/* Navigation */}
       <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20">
         <Navigation />
