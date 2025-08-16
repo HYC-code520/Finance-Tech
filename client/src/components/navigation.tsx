@@ -66,7 +66,7 @@ export default function Navigation() {
         {/* Sign In Button */}
         <Button
           onClick={handleLogin}
-          className="bg-accent-cyan text-primary-dark px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-full font-semibold sm:text-base md:text-lg hover:bg-white button-glow transition-all duration-300 text-[12px]"
+          className="bg-accent-cyan text-primary-dark px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-full font-semibold sm:text-base md:text-lg hover:bg-white button-glow transition-all duration-300 text-[9px]"
           data-testid="signin-button"
         >
           Sign In
