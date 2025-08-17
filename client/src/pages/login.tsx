@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import Navigation from "@/components/navigation";
 import backgroundImage from "@assets/Blue and Black Modern Technology Presentation_1755316044717.png";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -19,9 +20,21 @@ export default function Login() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const { signIn } = useAuth();
+  const [, navigate] = useLocation();
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login form submitted:", formData);
+    setError("");
+    
+    const { error: signInError } = await signIn(formData.email, formData.password);
+    
+    if (signInError) {
+      setError("Invalid login credentials");
+    } else {
+      navigate("/dashboard");
+    }
   };
 
   return (
@@ -62,6 +75,11 @@ export default function Login() {
 
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-4" data-testid="login-form">
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-lg text-sm">
+              {error}
+            </div>
+          )}
 
 
           {/* Email */}
