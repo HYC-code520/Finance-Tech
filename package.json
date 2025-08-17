@@ -6,12 +6,21 @@
   "scripts": {
     "dev": "set NODE_ENV=development && tsx server/index.ts",
     "dev:unix": "NODE_ENV=development tsx server/index.ts",
-    "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
-    "start": "set NODE_ENV=production && node dist/index.js",
+    "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist-server",
+    "build:client": "vite build",
+    "build:server": "esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist-server",
+    "start": "set NODE_ENV=production && node dist-server/index.js",
     "check": "tsc",
-    "db:setup": "setup-database.bat",
     "db:reset": "psql -U postgres -d capital_iq_dev -f sql/01_schema.sql && psql -U postgres -d capital_iq_dev -f sql/02_data.sql",
-    "db:query": "psql -U postgres -d capital_iq_dev"
+    "db:query": "psql -U postgres -d capital_iq_dev",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "docker:reset": "docker-compose down --volumes && docker-compose up -d",
+    "docker:dev": "docker-compose -f docker-compose.dev.yml up",
+    "docker:dev:build": "docker-compose -f docker-compose.dev.yml build",
+    "docker:dev:down": "docker-compose -f docker-compose.dev.yml down"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

@@ -27,6 +27,19 @@ S&P Global is failing to systematically capitalize on customer feedback for Capi
 
 > **Core Premise**: Feedback is only useful if you can align it with a business objective.
 
+## 🚀 Quick Setup for Developers
+
+**Ready to start developing? Two commands and you're running:**
+
+```bash
+git clone <repository-url> && cd Finance-Tech
+docker-compose up --build
+```
+
+**Open http://localhost:5000** - Your full-stack app with database and sample data is ready! 🎉
+
+📋 **[Quick Start Guide](QUICK_START.md)** | 📖 **[Full Setup Instructions](#-development-setup)**
+
 ## 🚀 Latest Updates
 
 ### ✅ Database Integration Complete
@@ -56,7 +69,7 @@ S&P Global is failing to systematically capitalize on customer feedback for Capi
 - **Environment-based** database service abstraction
 
 ### Database Layer
-- **Local Development**: PostgreSQL with automated setup scripts
+- **Local Development**: PostgreSQL with Docker setup
 - **Production Ready**: Supabase integration with pgvector for semantic search
 - **Performance Optimized**: Connection pooling, parameterized queries
 - **Type Safety**: Full TypeScript interfaces matching database schema
@@ -121,66 +134,99 @@ Capital-IQ-Strategic-Intelligence-Engine/
 ## 🛠️ Development Setup
 
 ### Prerequisites
-- **Node.js** 18+ 
-- **npm** or **yarn**
+- **Docker Desktop** (Required)
 - **Git**
-- **PostgreSQL 17** (for local development)
 
-### Quick Start
+### 🐳 Quick Start (One Command Setup)
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd Finance-Tech
-   ```
+**For new developers - get up and running in 5 minutes:**
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+```bash
+# 1. Clone the repository
+git clone <repository-url>
+cd Finance-Tech
 
-3. **Set up PostgreSQL Database (Windows)**
-   ```powershell
-   # Install PostgreSQL 17 if not already installed
-   # Set password to 'postgres' for both user and PGPASSWORD
-   
-   # Run the automated database setup
-   .\setup-database-working.bat
-   
-   # Or manually:
-   psql -U postgres -c "CREATE DATABASE capital_iq_dev;"
-   psql -U postgres -d capital_iq_dev -f sql/01_schema.sql
-   psql -U postgres -d capital_iq_dev -f sql/02_data.sql
-   ```
+# 2. Start everything with Docker
+docker-compose up --build
+```
 
-4. **Configure Environment Variables**
-   ```bash
-   # Copy the example environment file
-   cp .env.example .env
-   
-   # Update .env with your settings (defaults work for local development)
-   ```
+🎉 **That's it!** Open http://localhost:5000 to see your running app!
 
-5. **Start development server**
-   
-   **On Windows:**
-   ```powershell
-   # Set PostgreSQL password and start server
-   $env:PGPASSWORD="postgres"
-   npm run dev
-   ```
-   
-   **On macOS/Linux:**
-   ```bash
-   PGPASSWORD=postgres npm run dev
-   ```
+✅ **What you get automatically:**
+- PostgreSQL 17 database with sample data (10 support tickets)
+- React frontend built and served  
+- Express backend with API endpoints
+- Full development environment ready
 
-6. **Access the application**
-   ```
-   🌐 Frontend: http://localhost:5000
-   🔧 API: http://localhost:5000/api
-   📊 Dashboard: http://localhost:5000/dashboard
-   ```
+> **Why Docker?** No PostgreSQL installation, no Node.js version conflicts, works identically on Windows/Mac/Linux, instant setup for any developer on your team.
+
+📖 **[Quick Start Guide](QUICK_START.md)** - Essential commands for daily development  
+📖 **[Complete Docker Guide](DOCKER.md)** - Advanced commands, troubleshooting, and development workflows
+
+### Alternative: Manual Setup (Not Recommended)
+
+<details>
+<summary>Click to expand manual setup instructions</summary>
+
+> **⚠️ Warning:** Manual setup is complex and error-prone. Docker is strongly recommended for all development.
+
+**Prerequisites:**
+- Node.js 18+
+- PostgreSQL 17
+
+**Steps:**
+1. Install PostgreSQL 17 and configure user/password
+2. Run manual SQL setup (see LEGACY_SETUP.md)
+3. Configure environment variables in `.env` file
+4. Run `npm install` and `npm run dev`
+5. Access application at http://localhost:5000
+
+See [`LEGACY_SETUP.md`](LEGACY_SETUP.md) for complete manual setup instructions.
+
+</details>
+
+## 🐳 Docker Commands
+
+### Essential Commands
+```bash
+# Start everything (first time)
+docker-compose up --build
+
+# Start in background
+docker-compose up -d
+
+# Stop everything
+docker-compose down
+
+# Reset database with fresh data
+docker-compose down --volumes && docker-compose up
+
+# View live logs
+docker-compose logs -f
+```
+
+### Development Commands
+```bash
+# Development mode with hot reload
+docker-compose -f docker-compose.dev.yml up
+
+# Rebuild images
+docker-compose build --no-cache
+
+# Connect to database directly
+docker exec -it capital-iq-db psql -U postgres -d capital_iq_dev
+```
+
+### Quick npm Scripts
+```bash
+npm run docker:up              # Start production environment
+npm run docker:dev             # Start development environment  
+npm run docker:down            # Stop all services
+npm run docker:reset           # Reset database and restart
+npm run docker:logs            # View logs
+```
+
+📖 **[Complete Docker Guide](DOCKER.md)** for detailed setup, troubleshooting, and advanced usage
 
 ### Environment Configuration
 
@@ -204,28 +250,10 @@ NODE_ENV=development
 PORT=5000
 ```
 
-### Database Setup Options
 
-#### Option 1: Automated Setup (Recommended)
-```powershell
-# Windows - runs complete database setup
-.\setup-database-working.bat
-```
+### Database Setup (Manual, Not Recommended)
 
-#### Option 2: Manual Setup
-```bash
-# 1. Create database
-createdb -U postgres capital_iq_dev
-
-# 2. Load schema
-psql -U postgres -d capital_iq_dev -f sql/01_schema.sql
-
-# 3. Load sample data (10 support tickets)
-psql -U postgres -d capital_iq_dev -f sql/02_data.sql
-
-# 4. Verify setup
-psql -U postgres -d capital_iq_dev -c "SELECT COUNT(*) FROM support_tickets;"
-```
+See [`LEGACY_SETUP.md`](LEGACY_SETUP.md) for full manual setup instructions if you cannot use Docker.
 
 ### Troubleshooting Setup
 
@@ -396,6 +424,7 @@ Built on Radix UI primitives with custom S&P styling:
 3. **Story-Driven Development**: Ensure features support demo narrative
 4. **No Demo Day Features**: Focus on polish and rehearsal
 
+
 ## 🔧 Scripts Reference
 
 ```bash
@@ -403,9 +432,6 @@ Built on Radix UI primitives with custom S&P styling:
 npm run dev          # Start development server with database
 npm run build        # Build for production (frontend + server)
 npm start            # Start production server
-
-# Database Setup (Windows)
-.\setup-database-working.bat    # Complete PostgreSQL setup with sample data
 
 # Database Management
 psql -U postgres -d capital_iq_dev    # Connect to database
@@ -422,13 +448,13 @@ npm run analyze      # Bundle size analysis (if implemented)
 ### Development Workflow Commands
 
 ```powershell
-# Complete setup for new developer (Windows)
+# Complete setup for new developer (Manual, not recommended)
 git clone <repository-url>
 cd Finance-Tech
 npm install
-.\setup-database-working.bat
+# See LEGACY_SETUP.md for manual database setup
 $env:PGPASSWORD="postgres"
-npm run dev
+
 
 # Quick restart after changes
 npm run build && npm run dev
@@ -436,7 +462,6 @@ npm run build && npm run dev
 # Database verification
 psql -U postgres -d capital_iq_dev -c "SELECT COUNT(*) FROM support_tickets;"
 ```
-
 ## 📞 Support & Contact
 
 For questions about the Capital IQ Strategic Intelligence Engine:

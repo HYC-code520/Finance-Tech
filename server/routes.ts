@@ -31,6 +31,27 @@ pool.on('error', (err) => {
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
+  // Health check endpoint for Docker
+  app.get("/api/health", async (req, res) => {
+    try {
+      // Test database connection
+      const result = await pool.query('SELECT 1');
+      res.status(200).json({ 
+        status: 'healthy', 
+        database: 'connected',
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Health check failed:', error);
+      res.status(503).json({ 
+        status: 'unhealthy', 
+        database: 'disconnected',
+        error: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
+  
   // Get all tickets with optional filtering
   app.get("/api/tickets", async (req, res) => {
     try {
