@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
-import { Search, User, Clock, AlertCircle, CheckCircle, XCircle, Bot } from "lucide-react";
+import { Search, User, Clock, AlertCircle, CheckCircle, XCircle, Bot, Building, Leaf } from "lucide-react";
 import Navigation from "@/components/navigation";
 import Sidebar from "@/components/sidebar";
 import { Input } from "@/components/ui/input";
@@ -274,22 +274,6 @@ export default function Dashboard() {
     }
   }, [])
 
-  // Filter tickets based on search term and database data - Memoized for performance
-  const filteredTickets = useMemo(() => {
-    if (!searchTerm.trim()) return tickets;
-    
-    const lowerSearchTerm = searchTerm.toLowerCase();
-    return tickets.filter(ticket =>
-      ticket.ticket_subject?.toLowerCase().includes(lowerSearchTerm) ||
-      ticket.ticket_body.toLowerCase().includes(lowerSearchTerm) ||
-      ticket.ticket_id.toLowerCase().includes(lowerSearchTerm) ||
-      ticket.product_area?.toLowerCase().includes(lowerSearchTerm) ||
-      ticket.user_persona?.toLowerCase().includes(lowerSearchTerm)
-    );
-  }, [tickets, searchTerm]);
-
-  const rawTicketsCount = tickets.length;
-
   // Memoized AI ticket count calculation
   const mentionedAI = useMemo(() => {
     return tickets.filter(ticket => 
@@ -298,6 +282,32 @@ export default function Dashboard() {
       ticket.ticket_body.toLowerCase().includes('ai') ||
       ticket.ticket_subject?.toLowerCase().includes('kensho') ||
       ticket.ticket_body.toLowerCase().includes('kensho')
+    ).length;
+  }, [tickets]);
+
+  // Memoized Private Markets ticket count calculation
+  const privateMarketsCount = useMemo(() => {
+    return tickets.filter(ticket => 
+      ticket.ticket_subject?.toLowerCase().includes('private market') || 
+      ticket.product_area?.toLowerCase().includes('private_market') ||
+      ticket.ticket_body.toLowerCase().includes('private market') ||
+      ticket.ticket_subject?.toLowerCase().includes('pe') ||
+      ticket.ticket_body.toLowerCase().includes('private equity') ||
+      ticket.ticket_body.toLowerCase().includes('venture capital') ||
+      ticket.ticket_body.toLowerCase().includes('buyout')
+    ).length;
+  }, [tickets]);
+
+  // Memoized ESG ticket count calculation
+  const esgCount = useMemo(() => {
+    return tickets.filter(ticket => 
+      ticket.ticket_subject?.toLowerCase().includes('esg') || 
+      ticket.product_area?.toLowerCase().includes('esg') ||
+      ticket.ticket_body.toLowerCase().includes('esg') ||
+      ticket.ticket_subject?.toLowerCase().includes('environmental') ||
+      ticket.ticket_body.toLowerCase().includes('sustainability') ||
+      ticket.ticket_body.toLowerCase().includes('governance') ||
+      ticket.ticket_body.toLowerCase().includes('social')
     ).length;
   }, [tickets]);
 
@@ -333,6 +343,57 @@ export default function Dashboard() {
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   }, []);
+
+  // Filter tickets based on search term and database data - Memoized for performance
+  const filteredTickets = useMemo(() => {
+    let filtered = tickets;
+    
+    // First filter by active tab
+    if (activeTab === "mentioned") {
+      filtered = tickets.filter(ticket => 
+        ticket.ticket_subject?.toLowerCase().includes('ai') || 
+        ticket.product_area?.toLowerCase().includes('ai') ||
+        ticket.ticket_body.toLowerCase().includes('ai') ||
+        ticket.ticket_subject?.toLowerCase().includes('kensho') ||
+        ticket.ticket_body.toLowerCase().includes('kensho')
+      );
+    } else if (activeTab === "private-markets") {
+      filtered = tickets.filter(ticket => 
+        ticket.ticket_subject?.toLowerCase().includes('private market') || 
+        ticket.product_area?.toLowerCase().includes('private_market') ||
+        ticket.ticket_body.toLowerCase().includes('private market') ||
+        ticket.ticket_subject?.toLowerCase().includes('pe') ||
+        ticket.ticket_body.toLowerCase().includes('private equity') ||
+        ticket.ticket_body.toLowerCase().includes('venture capital') ||
+        ticket.ticket_body.toLowerCase().includes('buyout')
+      );
+    } else if (activeTab === "esg") {
+      filtered = tickets.filter(ticket => 
+        ticket.ticket_subject?.toLowerCase().includes('esg') || 
+        ticket.product_area?.toLowerCase().includes('esg') ||
+        ticket.ticket_body.toLowerCase().includes('esg') ||
+        ticket.ticket_subject?.toLowerCase().includes('environmental') ||
+        ticket.ticket_body.toLowerCase().includes('sustainability') ||
+        ticket.ticket_body.toLowerCase().includes('governance') ||
+        ticket.ticket_body.toLowerCase().includes('social')
+      );
+    }
+    // For "assigned" tab, show all tickets (default behavior)
+    
+    // Then filter by search term if provided
+    if (searchTerm.trim()) {
+      const lowerSearchTerm = searchTerm.toLowerCase();
+      filtered = filtered.filter(ticket =>
+        ticket.ticket_subject?.toLowerCase().includes(lowerSearchTerm) ||
+        ticket.ticket_body.toLowerCase().includes(lowerSearchTerm) ||
+        ticket.ticket_id.toLowerCase().includes(lowerSearchTerm) ||
+        ticket.product_area?.toLowerCase().includes(lowerSearchTerm) ||
+        ticket.user_persona?.toLowerCase().includes(lowerSearchTerm)
+      );
+    }
+    
+    return filtered;
+  }, [tickets, searchTerm, activeTab]); // Added activeTab dependency
 
   if (loading) {
     return (
@@ -430,10 +491,12 @@ export default function Dashboard() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 w-5 h-5 z-10" />
             <Input
               type="text"
-              placeholder="Search for users, groups, companies, articles, requests, admin options..."
+              placeholder="Search tickets by subject, content, ID, product area, or user type..."
               value={searchTerm}
               onChange={handleSearchChange}
-              className="pl-10 bg-[#092946]/80 backdrop-blur-sm border-0 text-white placeholder:text-gray-300 focus:border-0 focus:ring-0 rounded-2xl transform-gpu will-change-contents"
+              className="pl-10 bg-[#092946]/80 backdrop-blur-sm boPrivate Markets
+
+ESGrder-0 text-white placeholder:text-gray-300 focus:border-0 focus:ring-0 rounded-2xl transform-gpu will-change-contents"
               data-testid="search-input"
               style={{ willChange: 'contents' }}
             />
@@ -464,14 +527,14 @@ export default function Dashboard() {
                     }`} />
                   </div>
                   <div>
-                    <div className="text-white text-xs font-medium">Raw tickets</div>
+                    <div className="text-white text-xs font-medium">Assigned</div>
                   </div>
                   <span className={`text-xs px-2 py-1 rounded-full font-medium ${
                     activeTab === "assigned"
                       ? "bg-accent-cyan text-primary-dark"
                       : "bg-white/20 text-white"
                   }`}>
-                    {rawTicketsCount}
+                    {tickets.length}
                   </span>
                 </button>
 
@@ -500,6 +563,64 @@ export default function Dashboard() {
                         : "bg-white/20 text-white"
                     }`}>
                       {mentionedAI}
+                    </span>
+                  )}
+                </button>
+
+                <button
+                  onClick={() => setActiveTab("private-markets")}
+                  className={`flex-1 flex items-center justify-center gap-2 p-3 text-center transition-colors ${
+                    activeTab === "private-markets"
+                      ? "bg-accent-cyan/20 border-b-2 border-accent-cyan"
+                      : "hover:bg-white/5"
+                  }`}
+                >
+                  <div className={`w-6 h-6 rounded flex items-center justify-center ${
+                    activeTab === "private-markets" ? "bg-accent-cyan" : "bg-white/20"
+                  }`}>
+                    <Building className={`w-3 h-3 ${
+                      activeTab === "private-markets" ? "text-primary-dark" : "text-white"
+                    }`} />
+                  </div>
+                  <div>
+                    <div className="text-white text-xs font-medium">Private Markets</div>
+                  </div>
+                  {privateMarketsCount > 0 && (
+                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                      activeTab === "private-markets"
+                        ? "bg-accent-cyan text-primary-dark"
+                        : "bg-white/20 text-white"
+                    }`}>
+                      {privateMarketsCount}
+                    </span>
+                  )}
+                </button>
+
+                <button
+                  onClick={() => setActiveTab("esg")}
+                  className={`flex-1 flex items-center justify-center gap-2 p-3 text-center transition-colors ${
+                    activeTab === "esg"
+                      ? "bg-accent-cyan/20 border-b-2 border-accent-cyan"
+                      : "hover:bg-white/5"
+                  }`}
+                >
+                  <div className={`w-6 h-6 rounded flex items-center justify-center ${
+                    activeTab === "esg" ? "bg-accent-cyan" : "bg-white/20"
+                  }`}>
+                    <Leaf className={`w-3 h-3 ${
+                      activeTab === "esg" ? "text-primary-dark" : "text-white"
+                    }`} />
+                  </div>
+                  <div>
+                    <div className="text-white text-xs font-medium">ESG</div>
+                  </div>
+                  {esgCount > 0 && (
+                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                      activeTab === "esg"
+                        ? "bg-accent-cyan text-primary-dark"
+                        : "bg-white/20 text-white"
+                    }`}>
+                      {esgCount}
                     </span>
                   )}
                 </button>

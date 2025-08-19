@@ -8,6 +8,9 @@ import Login from "@/pages/login";
 import Signup from "@/pages/signup";
 import Dashboard from "@/pages/dashboard";
 import DesignSystem from "@/pages/design-system";
+import Network from "./pages/network";
+import UsersPage from "./pages/users";
+import SettingsPage from "./pages/settings";
 import NotFound from "@/pages/not-found";
 import Navigation from "@/components/navigation";
 
@@ -29,6 +32,9 @@ function Router() {
         </div>
       )} />
       <Route path="/dashboard" component={Dashboard} />
+      <Route path="/network" component={Network} />
+      <Route path="/users" component={UsersPage} />
+      <Route path="/settings" component={SettingsPage} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>

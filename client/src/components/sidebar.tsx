@@ -8,16 +8,16 @@ const sidebarItems = [
     href: "/dashboard",
     isActive: true
   },
-  {
-    icon: Share2,
-    label: "Network",
-    href: "/network"
-  },
-  {
-    icon: Users,
-    label: "Users",
-    href: "/users"
-  },
+  // {
+  //   icon: Share2,
+  //   label: "Network",
+  //   href: "/network"
+  // },
+  // {
+  //   icon: Users,
+  //   label: "Users",
+  //   href: "/users"
+  // },
   {
     icon: Settings,
     label: "Settings",
