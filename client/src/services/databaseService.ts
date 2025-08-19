@@ -30,7 +30,7 @@ export interface DatabaseService {
 export class LocalDatabaseService implements DatabaseService {
   private baseUrl: string;
   
-  constructor(baseUrl = 'http://localhost:5000/api') {
+  constructor(baseUrl = 'http://localhost:5001/api') {
     this.baseUrl = baseUrl;
   }
   

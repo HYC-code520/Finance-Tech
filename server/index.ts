@@ -59,30 +59,28 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
   const port = parseInt(process.env.PORT || '5000', 10);
   
-  // Use localhost for Windows compatibility instead of 0.0.0.0
-  const host = process.platform === 'win32' ? 'localhost' : '0.0.0.0';
+  // In Docker, we need to bind to 0.0.0.0 to allow external connections
+  const host = process.env.DOCKER === 'true' ? '0.0.0.0' : 
+               process.platform === 'win32' ? 'localhost' : '0.0.0.0';
   
   server.listen({
     port,
     host,
-    // Remove reusePort for Windows compatibility
-    ...(process.platform !== 'win32' && { reusePort: true }),
+    // Only use reusePort when not in Docker and not on Windows
+    ...(process.env.DOCKER !== 'true' && process.platform !== 'win32' && { reusePort: true }),
   }, () => {
-    log(`serving on port ${port} (${host})`);
+    log(`Server running at http://${host}:${port}`);
+    log(`Environment: ${app.get("env")}`);
+    if (process.env.DOCKER === 'true') {
+      log('Running in Docker container');
+    }
   });
 })();
