@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
-import { Search, User, Clock, AlertCircle, CheckCircle, XCircle, Bot, Building, Leaf, Grid3X3, List } from "lucide-react";
+import { Search, User, Clock, AlertCircle, CheckCircle, XCircle, Bot, Building, Leaf, Grid3X3, List, ChevronDown, ChevronUp, ArrowUpDown, Zap, Heart } from "lucide-react";
 import Navigation from "@/components/navigation";
 import Sidebar from "@/components/sidebar";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,71 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { databaseService } from "@/services/databaseService";
 import type { SupportTicket } from "@/types/tickets";
+
+// Sentiment calculation utility
+const calculateSentiment = (ticket: SupportTicket): number => {
+  const text = `${ticket.ticket_subject || ''} ${ticket.ticket_body}`.toLowerCase();
+  
+  const negativeWords = ['angry', 'frustrated', 'terrible', 'awful', 'hate', 'worst', 'useless', 'broken', 'failed', 'bug', 'error', 'crash', 'problem', 'issue', 'not working', 'disappointed', 'unacceptable'];
+  const positiveWords = ['great', 'excellent', 'love', 'amazing', 'perfect', 'wonderful', 'helpful', 'thanks', 'appreciate', 'good', 'works well', 'satisfied'];
+  
+  let score = 0.5; // Start neutral
+  
+  if (ticket.ticket_priority === 'urgent') score -= 0.3;
+  else if (ticket.ticket_priority === 'high') score -= 0.2;
+  else if (ticket.ticket_priority === 'low') score += 0.1;
+  
+  if (ticket.ticket_status === 'escalated') score -= 0.2;
+  else if (ticket.ticket_status === 'closed') score += 0.1;
+  
+  negativeWords.forEach(word => {
+    if (text.includes(word)) score -= 0.1;
+  });
+  
+  positiveWords.forEach(word => {
+    if (text.includes(word)) score += 0.1;
+  });
+  
+  return Math.max(0, Math.min(1, score));
+};
+
+const getSentimentColor = (score: number): string => {
+  if (score <= 0.3) return 'from-red-500 to-red-400';
+  if (score <= 0.7) return 'from-yellow-500 to-yellow-400';
+  return 'from-green-500 to-green-400';
+};
+
+const getSentimentLabel = (score: number): string => {
+  if (score <= 0.3) return 'Negative';
+  if (score <= 0.7) return 'Neutral';
+  return 'Positive';
+};
+
+const SentimentBar = ({ score }: { score: number }) => {
+  const percentage = score * 100;
+  
+  return (
+    <div className="w-full mb-3">
+      <div className="relative w-full h-1.5 bg-gray-700 rounded-full overflow-hidden mb-1">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 opacity-40"></div>
+        
+        {/* Indicator dot */}
+        <div 
+          className={`absolute top-0 w-2 h-1.5 bg-gradient-to-r ${getSentimentColor(score)} rounded-full shadow-sm transform -translate-x-1/2 transition-all duration-300`}
+          style={{ left: `${percentage}%` }}
+        ></div>
+      </div>
+      
+      {/* Labels underneath */}
+      <div className="flex justify-between text-xs">
+        <span className="text-red-400">Upset</span>
+        <span className="text-yellow-400">Neutral</span>
+        <span className="text-green-400">Happy</span>
+      </div>
+    </div>
+  );
+};
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -50,6 +115,47 @@ const getStatusIcon = (status: string) => {
   }
 };
 
+// Priority Indicator Component
+const PriorityIndicator = ({ priority }: { priority: string }) => {
+  const getPriorityLevel = (priority: string): number => {
+    switch (priority) {
+      case 'urgent': return 4;
+      case 'high': return 3;
+      case 'medium': return 2;
+      case 'low': return 1;
+      default: return 1;
+    }
+  };
+
+  const level = getPriorityLevel(priority);
+  
+  return (
+    <div className="flex items-center gap-1">
+      <span className={`text-xs font-medium ${getPriorityColor(priority)}`}>
+        {priority}
+      </span>
+      <div className="flex gap-0.5 ml-1">
+        {[1, 2, 3, 4].map((dot) => (
+          <div
+            key={dot}
+            className={`w-1.5 h-1.5 rounded-full ${
+              dot <= level 
+                ? priority === 'urgent' 
+                  ? 'bg-red-400' 
+                  : priority === 'high'
+                  ? 'bg-orange-400'
+                  : priority === 'medium'
+                  ? 'bg-accent-cyan'
+                  : 'bg-green-400'
+                : 'bg-gray-600'
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 // Particle interface
 interface Particle {
   x: number;
@@ -66,11 +172,13 @@ interface Particle {
 const TicketCard = React.memo(({ 
   ticket, 
   index, 
-  assignee 
+  assignee,
+  formatTimeAgo
 }: { 
   ticket: SupportTicket; 
   index: number; 
-  assignee: { name: string; role: string } 
+  assignee: { name: string; role: string };
+  formatTimeAgo: (timestamp: string) => string;
 }) => (
   <div 
     className="relative bg-[#092946]/50 border border-[#71FDFF]/30 rounded-2xl p-5 hover:border-[#71FDFF]/50 transition-all duration-300 backdrop-blur-sm transform-gpu will-change-transform"
@@ -88,9 +196,12 @@ const TicketCard = React.memo(({
           <span className="ml-1">{ticket.ticket_status}</span>
         </Badge>
       </div>
-      <span className={`text-xs font-medium ${getPriorityColor(ticket.ticket_priority)}`}>
-        {ticket.ticket_priority}
-      </span>
+      <div className="flex flex-col items-end gap-1">
+        <PriorityIndicator priority={ticket.ticket_priority} />
+        <span className="text-xs text-gray-400">
+          {formatTimeAgo(ticket.timestamp_utc)}
+        </span>
+      </div>
     </div>
 
     {/* Ticket Title */}
@@ -98,46 +209,36 @@ const TicketCard = React.memo(({
       {ticket.ticket_subject || 'No Subject'}
     </h3>
 
-    {/* Product Area & User Persona Info */}
-    <div className="flex items-center gap-2 mb-3 text-xs text-gray-300">
-      <AlertCircle className="w-3 h-3" />
-      <span>{ticket.product_area?.replace('_', ' ') || 'Unknown'}</span>
-      <span>•</span>
-      <span>{ticket.user_persona?.replace('_', ' ') || 'Unknown'}</span>
-      <span>•</span>
-      <span className="text-accent-cyan">Tier {ticket.client_firm_tier}</span>
+    {/* Product Area & Tier Info */}
+    <div className="flex items-center justify-between mb-3 text-xs">
+      <span className="text-gray-300">{ticket.product_area?.replace('_', ' ') || 'Unknown'}</span>
+      <span className="text-accent-cyan font-medium">Tier {ticket.client_firm_tier}</span>
     </div>
 
-    {/* Assignee */}
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        <Avatar className="w-6 h-6">
-          <AvatarFallback className="bg-[#041420] text-accent-cyan text-xs font-medium">
-            {assignee.name.split(' ').map(n => n[0]).join('')}
-          </AvatarFallback>
-        </Avatar>
-        <div>
-          <div className="text-white text-xs font-medium">
-            {assignee.name}
-          </div>
-          <div className="text-gray-400 text-xs">
-            {assignee.role}
-          </div>
+    {/* Customer Sentiment Bar */}
+    <SentimentBar score={calculateSentiment(ticket)} />
+
+    {/* Bottom section with Assignee */}
+    <div className="flex items-center gap-2 mt-4 mb-2">
+      {/* Assignee - Bottom Left */}
+      <Avatar className="w-6 h-6">
+        <AvatarFallback className="bg-[#041420] text-accent-cyan text-xs font-medium">
+          {assignee.name.split(' ').map(n => n[0]).join('')}
+        </AvatarFallback>
+      </Avatar>
+      <div>
+        <div className="text-white text-xs font-medium">
+          {assignee.name}
+        </div>
+        <div className="text-gray-400 text-xs">
+          {assignee.role}
         </div>
       </div>
-      <div className="absolute bottom-4 right-0">
-        <div 
-          className="bg-[#71FDFF] text-black px-4 py-1 text-xs font-medium"
-          style={{
-            borderTopLeftRadius: '8px',
-            borderBottomLeftRadius: '8px',
-            borderTopRightRadius: '0px',
-            borderBottomRightRadius: '0px'
-          }}
-        >
-          #{index + 1}
-        </div>
-      </div>
+    </div>
+
+    {/* Ticket Number - Absolute positioned at bottom right */}
+    <div className="absolute bottom-0 right-0 bg-[#71FDFF] text-black px-3 py-1 text-xs font-medium rounded-tl-lg">
+      #{index + 1}
     </div>
   </div>
 ));
@@ -151,6 +252,10 @@ export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("assigned");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid"); // New state for view mode
+  const [dateSortOrder, setDateSortOrder] = useState<"newest" | "oldest">("newest");
+  const [prioritySortOrder, setPrioritySortOrder] = useState<"high" | "low" | "none">("none");
+  const [sentimentSortOrder, setSentimentSortOrder] = useState<"positive" | "negative" | "none">("none");
+  const [isLegendCollapsed, setIsLegendCollapsed] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Load real data from database
@@ -394,87 +499,135 @@ export default function Dashboard() {
       );
     }
     
-    return filtered;
-  }, [tickets, searchTerm, activeTab]); // Added activeTab dependency
+    // Sort by priority, sentiment, or date
+    const sorted = [...filtered].sort((a, b) => {
+      // Priority sorting takes precedence
+      if (prioritySortOrder !== "none") {
+        const priorityOrder = { urgent: 4, high: 3, medium: 2, low: 1 };
+        const priorityA = priorityOrder[a.ticket_priority as keyof typeof priorityOrder] || 1;
+        const priorityB = priorityOrder[b.ticket_priority as keyof typeof priorityOrder] || 1;
+        
+        if (prioritySortOrder === "high") {
+          return priorityB - priorityA; // High priority first
+        } else {
+          return priorityA - priorityB; // Low priority first
+        }
+      }
+      
+      // Sentiment sorting takes second precedence
+      if (sentimentSortOrder !== "none") {
+        const sentimentA = calculateSentiment(a);
+        const sentimentB = calculateSentiment(b);
+        
+        if (sentimentSortOrder === "positive") {
+          return sentimentB - sentimentA; // Positive first
+        } else {
+          return sentimentA - sentimentB; // Negative first
+        }
+      }
+      
+      // Default to date sorting
+      const dateA = new Date(a.timestamp_utc).getTime();
+      const dateB = new Date(b.timestamp_utc).getTime();
+      
+      if (dateSortOrder === "newest") {
+        return dateB - dateA; // Newest first
+      } else {
+        return dateA - dateB; // Oldest first
+      }
+    });
+    
+    return sorted;
+  }, [tickets, searchTerm, activeTab, dateSortOrder, prioritySortOrder, sentimentSortOrder]);
 
   // New component for list view
   const TicketListItem = React.memo(({ 
     ticket, 
     index, 
-    assignee 
+    assignee,
+    formatTimeAgo
   }: { 
     ticket: SupportTicket; 
     index: number; 
-    assignee: { name: string; role: string } 
-  }) => (
-    <div 
-      className="bg-[#092946]/50 border border-[#71FDFF]/30 rounded-lg p-4 hover:border-[#71FDFF]/50 transition-all duration-300 backdrop-blur-sm"
-      data-testid={`ticket-list-item-${index}`}
-    >
-      <div className="flex items-center justify-between">
-        {/* Left side - Main ticket info */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-3 mb-2">
-            {/* Ticket number */}
-            <span className="bg-[#71FDFF] text-black px-2 py-1 text-xs font-medium rounded">
-              #{index + 1}
-            </span>
-            
-            {/* Status badge */}
-            <Badge 
-              variant="secondary" 
-              className={`${getStatusColor(ticket.ticket_status)} text-white border-0 px-2 py-1 text-xs`}
-            >
-              {getStatusIcon(ticket.ticket_status)}
-              <span className="ml-1">{ticket.ticket_status}</span>
-            </Badge>
+    assignee: { name: string; role: string };
+    formatTimeAgo: (timestamp: string) => string;
+  }) => {
+    const sentimentScore = calculateSentiment(ticket);
+    
+    return (
+      <div 
+        className="bg-[#092946]/50 border border-[#71FDFF]/30 rounded-lg p-3 hover:border-[#71FDFF]/50 transition-all duration-300 backdrop-blur-sm"
+        data-testid={`ticket-list-item-${index}`}
+      >
+        <div className="flex items-center gap-4 text-sm">
+          {/* Ticket Number */}
+          <span className="bg-[#71FDFF] text-black px-2 py-1 text-xs font-medium rounded shrink-0">
+            #{index + 1}
+          </span>
+          
+          {/* Status Badge */}
+          <Badge 
+            variant="secondary" 
+            className={`${getStatusColor(ticket.ticket_status)} text-white border-0 px-2 py-1 text-xs shrink-0`}
+          >
+            {getStatusIcon(ticket.ticket_status)}
+            <span className="ml-1">{ticket.ticket_status}</span>
+          </Badge>
 
-            {/* Priority */}
-            <span className={`text-xs font-medium ${getPriorityColor(ticket.ticket_priority)}`}>
-              {ticket.ticket_priority}
-            </span>
+          {/* Priority Indicator */}
+          <div className="shrink-0">
+            <PriorityIndicator priority={ticket.ticket_priority} />
+          </div>
 
-            {/* Timestamp */}
-            <span className="text-xs text-gray-400">
-              {formatTimeAgo(ticket.timestamp_utc)}
+          {/* Mini Sentiment Bar */}
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="w-12 h-1 bg-gray-700 rounded-full relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 opacity-40"></div>
+              <div 
+                className={`absolute top-0 w-1 h-1 bg-gradient-to-r ${getSentimentColor(sentimentScore)} rounded-full transform -translate-x-1/2`}
+                style={{ left: `${sentimentScore * 100}%` }}
+              ></div>
+            </div>
+            <span className="text-xs text-gray-400">{getSentimentLabel(sentimentScore)}</span>
+          </div>
+
+          {/* Ticket Subject - Main content */}
+          <div className="flex-1 min-w-0">
+            <span className="text-white font-medium truncate block">
+              {ticket.ticket_subject || 'No Subject'}
             </span>
           </div>
 
-          {/* Ticket subject */}
-          <h3 className="text-white font-medium text-sm mb-2 truncate">
-            {ticket.ticket_subject || 'No Subject'}
-          </h3>
+          {/* Product Area */}
+          <span className="text-xs text-gray-300 shrink-0">
+            {ticket.product_area?.replace('_', ' ') || 'Unknown'}
+          </span>
 
-          {/* Ticket details */}
-          <div className="flex items-center gap-4 text-xs text-gray-300">
-            <span className="flex items-center gap-1">
-              <AlertCircle className="w-3 h-3" />
-              {ticket.product_area?.replace('_', ' ') || 'Unknown'}
-            </span>
-            <span>{ticket.user_persona?.replace('_', ' ') || 'Unknown'}</span>
-            <span className="text-accent-cyan">Tier {ticket.client_firm_tier}</span>
-          </div>
-        </div>
+          {/* Tier */}
+          <span className="text-xs text-accent-cyan font-medium shrink-0">
+            T{ticket.client_firm_tier}
+          </span>
 
-        {/* Right side - Assignee */}
-        <div className="flex items-center gap-3 ml-4">
-          <div className="text-right">
-            <div className="text-white text-xs font-medium">
+          {/* Time */}
+          <span className="text-xs text-gray-400 shrink-0 w-16 text-right">
+            {formatTimeAgo(ticket.timestamp_utc)}
+          </span>
+
+          {/* Assignee */}
+          <div className="flex items-center gap-2 shrink-0">
+            <Avatar className="w-6 h-6">
+              <AvatarFallback className="bg-[#041420] text-accent-cyan text-xs font-medium">
+                {assignee.name.split(' ').map(n => n[0]).join('')}
+              </AvatarFallback>
+            </Avatar>
+            <span className="text-white text-xs font-medium min-w-0 truncate max-w-24">
               {assignee.name}
-            </div>
-            <div className="text-gray-400 text-xs">
-              {assignee.role}
-            </div>
+            </span>
           </div>
-          <Avatar className="w-8 h-8">
-            <AvatarFallback className="bg-[#041420] text-accent-cyan text-xs font-medium">
-              {assignee.name.split(' ').map(n => n[0]).join('')}
-            </AvatarFallback>
-          </Avatar>
         </div>
       </div>
-    </div>
-  ));
+    );
+  });
 
   TicketListItem.displayName = 'TicketListItem';
 
@@ -587,6 +740,100 @@ export default function Dashboard() {
         {/* Dashboard Content */}
         <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-20 py-6">
           
+          {/* Collapsible Legend */}
+          <div className="mb-6 bg-[#092946]/50 border border-[#71FDFF]/30 rounded-xl backdrop-blur-sm overflow-hidden">
+            <button
+              onClick={() => setIsLegendCollapsed(!isLegendCollapsed)}
+              className="w-full p-4 flex items-center justify-between hover:bg-white/5 transition-colors"
+            >
+              <h3 className="text-white text-sm font-medium flex items-center gap-2">
+                <div className="w-2 h-2 bg-accent-cyan rounded-full"></div>
+                Dashboard Guide
+              </h3>
+              {isLegendCollapsed ? (
+                <ChevronDown className="w-4 h-4 text-gray-400" />
+              ) : (
+                <ChevronUp className="w-4 h-4 text-gray-400" />
+              )}
+            </button>
+            
+            {!isLegendCollapsed && (
+              <div className="px-4 pb-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  
+                  {/* Customer Sentiment */}
+                  <div>
+                    <h4 className="text-white text-sm font-medium mb-2 flex items-center gap-2">
+                      <Heart className="w-3 h-3 text-accent-cyan" />
+                      Customer Sentiment
+                    </h4>
+                    <div className="space-y-2">
+                      <div className="w-32 h-2 bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 rounded-full opacity-60"></div>
+                      <div className="flex justify-between text-xs max-w-32">
+                        <div className="flex items-center gap-1">
+                          <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                          <span className="text-gray-300">Upset</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                          <span className="text-gray-300">Neutral</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                          <span className="text-gray-300">Happy</span>
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-1">
+                        White dot shows customer mood
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Priority Levels */}
+                  <div className="ml-8">
+                    <h4 className="text-white text-sm font-medium mb-2 flex items-center gap-2">
+                      <Zap className="w-3 h-3 text-orange-400" />
+                      Priority Levels
+                    </h4>
+                    <div className="space-y-1 text-xs">
+                      <div className="flex items-center gap-2">
+                        <div className="flex gap-0.5">
+                          {[1,2,3,4].map(i => <div key={i} className="w-1.5 h-1.5 bg-red-400 rounded-full" />)}
+                        </div>
+                        <span className="text-red-400 font-medium">Urgent</span>
+                        <span className="text-gray-400">- Immediate attention</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="flex gap-0.5">
+                          {[1,2,3].map(i => <div key={i} className="w-1.5 h-1.5 bg-orange-400 rounded-full" />)}
+                          <div className="w-1.5 h-1.5 bg-gray-600 rounded-full" />
+                        </div>
+                        <span className="text-orange-400 font-medium">High</span>
+                        <span className="text-gray-400">- Within hours</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="flex gap-0.5">
+                          {[1,2].map(i => <div key={i} className="w-1.5 h-1.5 bg-accent-cyan rounded-full" />)}
+                          {[3,4].map(i => <div key={i} className="w-1.5 h-1.5 bg-gray-600 rounded-full" />)}
+                        </div>
+                        <span className="text-accent-cyan font-medium">Medium</span>
+                        <span className="text-gray-400">- Within days</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="flex gap-0.5">
+                          <div className="w-1.5 h-1.5 bg-green-400 rounded-full" />
+                          {[2,3,4].map(i => <div key={i} className="w-1.5 h-1.5 bg-gray-600 rounded-full" />)}
+                        </div>
+                        <span className="text-green-400 font-medium">Low</span>
+                        <span className="text-gray-400">- When possible</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Horizontal Tabs */}
           <div className="mb-6">
             <div className="w-full bg-[#092946]/80 border border-[#71FDFF]/30 rounded-t-2xl overflow-hidden backdrop-blur-sm">
@@ -717,6 +964,65 @@ export default function Dashboard() {
               </span>
             </div>
             
+            {/* Sort Controls */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-300 mr-2">Sort:</span>
+              
+              {/* Priority Sort */}
+              <button
+                onClick={() => {
+                  const nextOrder = prioritySortOrder === "none" ? "high" : prioritySortOrder === "high" ? "low" : "none";
+                  setPrioritySortOrder(nextOrder);
+                  if (nextOrder !== "none") {
+                    setSentimentSortOrder("none");
+                  }
+                }}
+                className={`flex items-center gap-2 px-3 py-2 bg-[#092946]/80 border border-[#71FDFF]/30 rounded-lg backdrop-blur-sm transition-all duration-200 hover:border-[#71FDFF]/50 hover:bg-[#092946]/90 ${
+                  prioritySortOrder !== "none" ? "ring-1 ring-accent-cyan/50" : ""
+                }`}
+                type="button"
+              >
+                <Zap className="w-4 h-4 text-orange-400" />
+                <span className="text-sm text-white">
+                  {prioritySortOrder === "none" ? "Priority" : prioritySortOrder === "high" ? "High First" : "Low First"}
+                </span>
+                {prioritySortOrder !== "none" && <ArrowUpDown className="w-3 h-3 text-accent-cyan" />}
+              </button>
+
+              {/* Sentiment Sort */}
+              <button
+                onClick={() => {
+                  const nextOrder = sentimentSortOrder === "none" ? "negative" : sentimentSortOrder === "negative" ? "positive" : "none";
+                  setSentimentSortOrder(nextOrder);
+                  if (nextOrder !== "none") {
+                    setPrioritySortOrder("none");
+                  }
+                }}
+                className={`flex items-center gap-2 px-3 py-2 bg-[#092946]/80 border border-[#71FDFF]/30 rounded-lg backdrop-blur-sm transition-all duration-200 hover:border-[#71FDFF]/50 hover:bg-[#092946]/90 ${
+                  sentimentSortOrder !== "none" ? "ring-1 ring-accent-cyan/50" : ""
+                }`}
+                type="button"
+              >
+                <Heart className="w-4 h-4 text-red-400" />
+                <span className="text-sm text-white">
+                  {sentimentSortOrder === "none" ? "Sentiment" : sentimentSortOrder === "negative" ? "Most Upset First" : "Happiest First"}
+                </span>
+                {sentimentSortOrder !== "none" && <ArrowUpDown className="w-3 h-3 text-accent-cyan" />}
+              </button>
+
+              {/* Date Sort */}
+              <button
+                onClick={() => setDateSortOrder(dateSortOrder === "newest" ? "oldest" : "newest")}
+                className="flex items-center gap-2 px-3 py-2 bg-[#092946]/80 border border-[#71FDFF]/30 rounded-lg backdrop-blur-sm transition-all duration-200 hover:border-[#71FDFF]/50 hover:bg-[#092946]/90"
+                type="button"
+              >
+                <Clock className="w-4 h-4 text-accent-cyan" />
+                <span className="text-sm text-white">
+                  {dateSortOrder === "newest" ? "Newest" : "Oldest"}
+                </span>
+              </button>
+            </div>
+
             {/* View Mode Toggle */}
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-300 mr-2">View:</span>
@@ -761,6 +1067,7 @@ export default function Dashboard() {
                     ticket={ticket}
                     index={index}
                     assignee={assignee}
+                    formatTimeAgo={formatTimeAgo}
                   />
                 );
               })}
@@ -776,6 +1083,7 @@ export default function Dashboard() {
                     ticket={ticket}
                     index={index}
                     assignee={assignee}
+                    formatTimeAgo={formatTimeAgo}
                   />
                 );
               })}
