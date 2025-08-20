@@ -9,6 +9,7 @@ export default function Navigation() {
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Dashboard", path: "/dashboard" },
+    { name: "Settings", path: "/settings" },
     { name: "Design System", path: "/design-system" },
   ];
 
