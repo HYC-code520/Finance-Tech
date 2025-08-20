@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
-import { Search, User, Clock, AlertCircle, CheckCircle, XCircle, Bot, Building, Leaf } from "lucide-react";
+import { Search, User, Clock, AlertCircle, CheckCircle, XCircle, Bot, Building, Leaf, Grid3X3, List } from "lucide-react";
 import Navigation from "@/components/navigation";
 import Sidebar from "@/components/sidebar";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { databaseService } from "@/services/databaseService";
 import type { SupportTicket } from "@/types/tickets";
 
@@ -149,6 +150,7 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("assigned");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid"); // New state for view mode
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Load real data from database
@@ -395,6 +397,87 @@ export default function Dashboard() {
     return filtered;
   }, [tickets, searchTerm, activeTab]); // Added activeTab dependency
 
+  // New component for list view
+  const TicketListItem = React.memo(({ 
+    ticket, 
+    index, 
+    assignee 
+  }: { 
+    ticket: SupportTicket; 
+    index: number; 
+    assignee: { name: string; role: string } 
+  }) => (
+    <div 
+      className="bg-[#092946]/50 border border-[#71FDFF]/30 rounded-lg p-4 hover:border-[#71FDFF]/50 transition-all duration-300 backdrop-blur-sm"
+      data-testid={`ticket-list-item-${index}`}
+    >
+      <div className="flex items-center justify-between">
+        {/* Left side - Main ticket info */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-3 mb-2">
+            {/* Ticket number */}
+            <span className="bg-[#71FDFF] text-black px-2 py-1 text-xs font-medium rounded">
+              #{index + 1}
+            </span>
+            
+            {/* Status badge */}
+            <Badge 
+              variant="secondary" 
+              className={`${getStatusColor(ticket.ticket_status)} text-white border-0 px-2 py-1 text-xs`}
+            >
+              {getStatusIcon(ticket.ticket_status)}
+              <span className="ml-1">{ticket.ticket_status}</span>
+            </Badge>
+
+            {/* Priority */}
+            <span className={`text-xs font-medium ${getPriorityColor(ticket.ticket_priority)}`}>
+              {ticket.ticket_priority}
+            </span>
+
+            {/* Timestamp */}
+            <span className="text-xs text-gray-400">
+              {formatTimeAgo(ticket.timestamp_utc)}
+            </span>
+          </div>
+
+          {/* Ticket subject */}
+          <h3 className="text-white font-medium text-sm mb-2 truncate">
+            {ticket.ticket_subject || 'No Subject'}
+          </h3>
+
+          {/* Ticket details */}
+          <div className="flex items-center gap-4 text-xs text-gray-300">
+            <span className="flex items-center gap-1">
+              <AlertCircle className="w-3 h-3" />
+              {ticket.product_area?.replace('_', ' ') || 'Unknown'}
+            </span>
+            <span>{ticket.user_persona?.replace('_', ' ') || 'Unknown'}</span>
+            <span className="text-accent-cyan">Tier {ticket.client_firm_tier}</span>
+          </div>
+        </div>
+
+        {/* Right side - Assignee */}
+        <div className="flex items-center gap-3 ml-4">
+          <div className="text-right">
+            <div className="text-white text-xs font-medium">
+              {assignee.name}
+            </div>
+            <div className="text-gray-400 text-xs">
+              {assignee.role}
+            </div>
+          </div>
+          <Avatar className="w-8 h-8">
+            <AvatarFallback className="bg-[#041420] text-accent-cyan text-xs font-medium">
+              {assignee.name.split(' ').map(n => n[0]).join('')}
+            </AvatarFallback>
+          </Avatar>
+        </div>
+      </div>
+    </div>
+  ));
+
+  TicketListItem.displayName = 'TicketListItem';
+
   if (loading) {
     return (
       <div 
@@ -494,9 +577,7 @@ export default function Dashboard() {
               placeholder="Search tickets by subject, content, ID, product area, or user type..."
               value={searchTerm}
               onChange={handleSearchChange}
-              className="pl-10 bg-[#092946]/80 backdrop-blur-sm boPrivate Markets
-
-ESGrder-0 text-white placeholder:text-gray-300 focus:border-0 focus:ring-0 rounded-2xl transform-gpu will-change-contents"
+              className="pl-10 bg-[#092946]/80 backdrop-blur-sm border-0 text-white placeholder:text-gray-300 focus:border-0 focus:ring-0 rounded-2xl transform-gpu will-change-contents"
               data-testid="search-input"
               style={{ willChange: 'contents' }}
             />
@@ -628,8 +709,50 @@ ESGrder-0 text-white placeholder:text-gray-300 focus:border-0 focus:ring-0 round
             </div>
           </div>
 
-          {/* Tickets Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+          {/* View Toggle Controls */}
+          <div className="mb-6 flex justify-between items-center relative z-10">
+            <div className="text-white">
+              <span className="text-sm text-gray-300">
+                Showing {filteredTickets.length} of {tickets.length} tickets
+              </span>
+            </div>
+            
+            {/* View Mode Toggle */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-300 mr-2">View:</span>
+              <div className="flex bg-[#092946]/80 border border-[#71FDFF]/30 rounded-lg p-1 backdrop-blur-sm gap-1">
+                <button
+                  onClick={() => setViewMode("grid")}
+                  className={`p-2 rounded-full transition-all duration-200 cursor-pointer ${
+                    viewMode === "grid"
+                      ? "bg-accent-cyan text-primary-dark shadow-lg shadow-cyan-500/25"
+                      : "text-gray-300 hover:text-white hover:bg-white/10"
+                  }`}
+                  data-testid="grid-view-button"
+                  type="button"
+                >
+                  <Grid3X3 className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode("list")}
+                  className={`p-2 rounded-full transition-all duration-200 cursor-pointer ${
+                    viewMode === "list"
+                      ? "bg-accent-cyan text-primary-dark shadow-lg shadow-cyan-500/25"
+                      : "text-gray-300 hover:text-white hover:bg-white/10"
+                  }`}
+                  data-testid="list-view-button"
+                  type="button"
+                >
+                  <List className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Tickets Display - Grid or List View */}
+          {viewMode === "grid" ? (
+            /* Grid View */
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
               {filteredTickets.map((ticket, index) => {
                 const assignee = generateAssignee(ticket, index);
                 return (
@@ -642,6 +765,22 @@ ESGrder-0 text-white placeholder:text-gray-300 focus:border-0 focus:ring-0 round
                 );
               })}
             </div>
+          ) : (
+            /* List View */
+            <div className="space-y-3">
+              {filteredTickets.map((ticket, index) => {
+                const assignee = generateAssignee(ticket, index);
+                return (
+                  <TicketListItem
+                    key={ticket.ticket_id}
+                    ticket={ticket}
+                    index={index}
+                    assignee={assignee}
+                  />
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </div>
