@@ -19,6 +19,38 @@ console.log('🔧 Database config:', { ...dbConfig, password: '***' });
 
 const pool = new Pool(dbConfig);
 
+// Query to create feedback table if it doesn't exist
+const createFeedbackTableQuery = `
+CREATE TABLE IF NOT EXISTS feedback (
+  id SERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  initiative_id TEXT,
+  tags TEXT[],
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  sentiment TEXT CHECK (sentiment IN ('positive', 'negative', 'neutral'))
+);`;
+
+// Create feedback table and insert sample data
+pool.query(createFeedbackTableQuery)
+  .then(() => {
+    console.log('✅ Feedback table created or already exists');
+    
+    // Insert sample data
+    const sampleData = `
+    INSERT INTO feedback (title, content, initiative_id, tags, sentiment)
+    VALUES 
+      ('AI Integration Feedback', 'The new AI features have significantly improved our workflow', 'mentioned', ARRAY['ai', 'productivity'], 'positive'),
+      ('Private Markets Analysis', 'Need better data visualization for private equity metrics', 'private-markets', ARRAY['pe', 'visualization'], 'neutral'),
+      ('ESG Reporting Enhancement', 'The sustainability metrics are helping with compliance', 'esg', ARRAY['sustainability', 'compliance'], 'positive')
+    ON CONFLICT DO NOTHING;
+    `;
+    
+    return pool.query(sampleData);
+  })
+  .then(() => console.log('✅ Sample feedback data inserted'))
+  .catch(err => console.error('❌ Error setting up feedback:', err));
+
 // Test connection
 pool.on('connect', () => {
   console.log('✅ Connected to PostgreSQL database');
@@ -30,6 +62,27 @@ pool.on('error', (err) => {
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Get feedback with optional initiative filter
+  app.get('/api/feedback', async (req, res) => {
+    try {
+      const { initiativeId } = req.query;
+      let query = 'SELECT * FROM feedback';
+      const params: any[] = [];
+
+      if (initiativeId) {
+        query += ' WHERE initiative_id = $1';
+        params.push(initiativeId);
+      }
+
+      query += ' ORDER BY created_at DESC';
+      
+      const result = await pool.query(query, params);
+      res.json(result.rows);
+    } catch (error) {
+      console.error('Error fetching feedback:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
   
   // Health check endpoint for Docker
   app.get("/api/health", async (req, res) => {

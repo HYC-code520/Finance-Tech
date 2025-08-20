@@ -1,0 +1,55 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:17-alpine
+    container_name: capital-iq-db-dev
+    environment:
+      POSTGRES_DB: capital_iq_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ./sql:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d capital_iq_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - capital-iq-dev-network
+
+  # Development Environment with Hot Reload
+  app-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev.new
+    container_name: capital-iq-app-dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"  # Backend API
+      - "3001:3001"  # Vite dev server
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=capital_iq_dev
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - capital-iq-dev-network
+
+volumes:
+  postgres_dev_data:
+
+networks:
+  capital-iq-dev-network:
+    driver: bridge

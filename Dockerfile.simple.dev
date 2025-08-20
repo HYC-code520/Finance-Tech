@@ -1,0 +1,29 @@
+# Simple Development Dockerfile for Capital IQ Strategic Intelligence Engine
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install build dependencies for native modules
+RUN apk add --no-cache \
+    python3 \
+    py3-pip \
+    make \
+    g++ \
+    curl
+
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm install --ignore-optional
+
+# Copy source code
+COPY . .
+
+# Environment variables
+ENV PORT=3000
+ENV VITE_PORT=3001
+
+# Expose ports
+EXPOSE 3000 3001
+
+# Development command with hot reload
+CMD ["npm", "run", "dev"]
