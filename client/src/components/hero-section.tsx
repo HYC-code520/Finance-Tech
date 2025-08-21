@@ -1,10 +1,12 @@
 import { Button } from "@/components/ui/button";
+import { useLocation } from "wouter";
 import DecorativeLine from "./decorative-line";
 
 export default function HeroSection() {
+  const [, setLocation] = useLocation();
+  
   const handleSeeHowItWorks = () => {
-    // TODO: Implement navigation to demo or explanation section
-    console.log("See How It Works clicked");
+    setLocation("/dashboard");
   };
 
   return (
@@ -16,10 +18,10 @@ export default function HeroSection() {
         {/* Hero Title */}
         <div className="mb-6 sm:mb-8 md:mb-10 lg:mb-12" data-testid="hero-title">
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-2 sm:mb-3 md:mb-4 leading-tight animate-ascend">
-            <span className="text-white title-glow">S&P</span>
+            <span className="text-white title-glow">Capital IQ</span>
           </h1>
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-4 sm:mb-6 md:mb-8 leading-tight animate-ascend-delayed">
-            <span className="text-accent-cyan title-glow-cyan">Capital IQ</span>
+            <span className="text-accent-cyan title-glow-cyan">Distiller</span>
           </h1>
         </div>
 

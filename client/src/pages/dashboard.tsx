@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
-import { Search, User, Clock, AlertCircle, CheckCircle, XCircle, Bot, Building, Leaf, Grid3X3, List, ChevronDown, ChevronUp, ArrowUpDown, Zap, Heart } from "lucide-react";
+import { Search, User, Clock, AlertCircle, CheckCircle, XCircle, Bot, Building, Leaf, Grid3X3, List, ChevronDown, ChevronUp, ArrowUpDown, Zap, Heart, ChevronRight, Target, Lightbulb } from "lucide-react";
 import Navigation from "@/components/navigation";
 import Sidebar from "@/components/sidebar";
 import { Input } from "@/components/ui/input";
@@ -179,69 +179,91 @@ const TicketCard = React.memo(({
   index: number; 
   assignee: { name: string; role: string };
   formatTimeAgo: (timestamp: string) => string;
-}) => (
-  <div 
-    className="relative bg-[#092946]/50 border border-[#71FDFF]/30 rounded-2xl p-5 hover:border-[#71FDFF]/50 transition-all duration-300 backdrop-blur-sm transform-gpu will-change-transform"
-    data-testid={`ticket-card-${index}`}
-    style={{ willChange: 'transform, opacity' }}
-  >
-    {/* Status and Priority Header */}
-    <div className="flex items-center justify-between mb-3">
-      <div className="flex items-center gap-2">
-        <Badge 
-          variant="secondary" 
-          className={`${getStatusColor(ticket.ticket_status)} text-white border-0 px-2 py-1 text-xs`}
-        >
-          {getStatusIcon(ticket.ticket_status)}
-          <span className="ml-1">{ticket.ticket_status}</span>
-        </Badge>
-      </div>
-      <div className="flex flex-col items-end gap-1">
-        <PriorityIndicator priority={ticket.ticket_priority} />
-        <span className="text-xs text-gray-400">
-          {formatTimeAgo(ticket.timestamp_utc)}
-        </span>
-      </div>
-    </div>
-
-    {/* Ticket Title */}
-    <h3 className="text-white font-medium text-sm mb-3 line-clamp-2">
-      {ticket.ticket_subject || 'No Subject'}
-    </h3>
-
-    {/* Product Area & Tier Info */}
-    <div className="flex items-center justify-between mb-3 text-xs">
-      <span className="text-gray-300">{ticket.product_area?.replace('_', ' ') || 'Unknown'}</span>
-      <span className="text-accent-cyan font-medium">Tier {ticket.client_firm_tier}</span>
-    </div>
-
-    {/* Customer Sentiment Bar */}
-    <SentimentBar score={calculateSentiment(ticket)} />
-
-    {/* Bottom section with Assignee */}
-    <div className="flex items-center gap-2 mt-4 mb-2">
-      {/* Assignee - Bottom Left */}
-      <Avatar className="w-6 h-6">
-        <AvatarFallback className="bg-[#041420] text-accent-cyan text-xs font-medium">
-          {assignee.name.split(' ').map(n => n[0]).join('')}
-        </AvatarFallback>
-      </Avatar>
-      <div>
-        <div className="text-white text-xs font-medium">
-          {assignee.name}
+}) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  return (
+    <div 
+      className="relative bg-[#092946]/50 border border-[#71FDFF]/30 rounded-2xl p-5 hover:border-[#71FDFF]/50 transition-all duration-300 backdrop-blur-sm transform-gpu will-change-transform"
+      data-testid={`ticket-card-${index}`}
+      style={{ willChange: 'transform, opacity' }}
+    >
+      {/* Status and Priority Header */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <Badge 
+            variant="secondary" 
+            className={`${getStatusColor(ticket.ticket_status)} text-white border-0 px-2 py-1 text-xs`}
+          >
+            {getStatusIcon(ticket.ticket_status)}
+            <span className="ml-1">{ticket.ticket_status}</span>
+          </Badge>
         </div>
-        <div className="text-gray-400 text-xs">
-          {assignee.role}
+        <div className="flex flex-col items-end gap-1">
+          <PriorityIndicator priority={ticket.ticket_priority} />
+          <span className="text-xs text-gray-400">
+            {formatTimeAgo(ticket.timestamp_utc)}
+          </span>
         </div>
       </div>
-    </div>
 
-    {/* Ticket Number - Absolute positioned at bottom right */}
-    <div className="absolute bottom-0 right-0 bg-[#71FDFF] text-black px-3 py-1 text-xs font-medium rounded-tl-lg">
-      #{index + 1}
+      {/* Ticket Title and Body */}
+      <div className="mb-3">
+        <h3 className="text-white font-medium text-sm mb-1 line-clamp-2">
+          {ticket.ticket_subject || 'No Subject'}
+        </h3>
+        {ticket.ticket_body && (
+          <div>
+            <p className={`text-gray-300 text-xs leading-relaxed ${isExpanded ? '' : 'line-clamp-2'}`}>
+              {ticket.ticket_body}
+            </p>
+            {ticket.ticket_body.length > 100 && (
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="text-accent-cyan text-xs mt-1 hover:text-accent-cyan/80 flex items-center gap-1"
+              >
+                {isExpanded ? (
+                  <>Show less <ChevronUp className="w-3 h-3" /></>
+                ) : (
+                  <>Show more <ChevronRight className="w-3 h-3" /></>
+                )}
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Product Area & Tier Info */}
+      <div className="flex items-center justify-between mb-3 text-xs">
+        <span className="text-gray-300">{ticket.product_area?.replace('_', ' ') || 'Unknown'}</span>
+        <span className="text-accent-cyan font-medium">Tier {ticket.client_firm_tier}</span>
+      </div>
+
+      {/* Bottom section with Assignee */}
+      <div className="flex items-center gap-2 mt-4 mb-2">
+        {/* Assignee - Bottom Left */}
+        <Avatar className="w-6 h-6">
+          <AvatarFallback className="bg-[#041420] text-accent-cyan text-xs font-medium">
+            {assignee.name.split(' ').map(n => n[0]).join('')}
+          </AvatarFallback>
+        </Avatar>
+        <div>
+          <div className="text-white text-xs font-medium">
+            {assignee.name}
+          </div>
+          <div className="text-gray-400 text-xs">
+            {assignee.role}
+          </div>
+        </div>
+      </div>
+
+      {/* Ticket Number - Absolute positioned at bottom right */}
+      <div className="absolute bottom-0 right-0 bg-[#71FDFF] text-black px-3 py-1 text-xs font-medium rounded-tl-lg">
+        #{index + 1}
+      </div>
     </div>
-  </div>
-));
+  );
+});
 
 TicketCard.displayName = 'TicketCard';
 
@@ -418,6 +440,50 @@ export default function Dashboard() {
     ).length;
   }, [tickets]);
 
+  // Memoized Strategic Initiatives ticket count (AI + Private Markets + ESG combined)
+  const strategicCount = useMemo(() => {
+    return tickets.filter(ticket => {
+      const subject = ticket.ticket_subject?.toLowerCase() || '';
+      const body = ticket.ticket_body.toLowerCase();
+      const area = ticket.product_area?.toLowerCase() || '';
+      
+      return (
+        // AI/Kensho related
+        subject.includes('ai') || subject.includes('kensho') || 
+        body.includes('ai') || body.includes('kensho') || area.includes('ai') ||
+        // Private Markets related  
+        subject.includes('private market') || body.includes('private market') ||
+        body.includes('private equity') || body.includes('venture capital') ||
+        area.includes('private_market') || subject.includes('pe') ||
+        // ESG related
+        subject.includes('esg') || body.includes('esg') || area.includes('esg') ||
+        body.includes('environmental') || body.includes('sustainability') ||
+        body.includes('governance') || body.includes('social')
+      );
+    }).length;
+  }, [tickets]);
+
+  // Memoized Emerging Use-Cases ticket count (API, Python, automation, data science)
+  const emergingCount = useMemo(() => {
+    return tickets.filter(ticket => {
+      const subject = ticket.ticket_subject?.toLowerCase() || '';
+      const body = ticket.ticket_body.toLowerCase();
+      const area = ticket.product_area?.toLowerCase() || '';
+      
+      return (
+        // API related
+        subject.includes('api') || body.includes('api') || area.includes('api') ||
+        // Python/programming related
+        body.includes('python') || body.includes('sdk') || body.includes('library') ||
+        // Data science related  
+        body.includes('data science') || body.includes('automation') ||
+        body.includes('model') || body.includes('ml') || area.includes('data_export') ||
+        // Bulk/custom requests
+        body.includes('bulk') || body.includes('custom') || body.includes('export')
+      );
+    }).length;
+  }, [tickets]);
+
   // Format timestamp to match original design
   const formatTimeAgo = useCallback((timestamp: string) => {
     const date = new Date(timestamp);
@@ -484,6 +550,44 @@ export default function Dashboard() {
         ticket.ticket_body.toLowerCase().includes('governance') ||
         ticket.ticket_body.toLowerCase().includes('social')
       );
+    } else if (activeTab === "strategic") {
+      filtered = tickets.filter(ticket => {
+        const subject = ticket.ticket_subject?.toLowerCase() || '';
+        const body = ticket.ticket_body.toLowerCase();
+        const area = ticket.product_area?.toLowerCase() || '';
+        
+        return (
+          // AI/Kensho related
+          subject.includes('ai') || subject.includes('kensho') || 
+          body.includes('ai') || body.includes('kensho') || area.includes('ai') ||
+          // Private Markets related  
+          subject.includes('private market') || body.includes('private market') ||
+          body.includes('private equity') || body.includes('venture capital') ||
+          area.includes('private_market') || subject.includes('pe') ||
+          // ESG related
+          subject.includes('esg') || body.includes('esg') || area.includes('esg') ||
+          body.includes('environmental') || body.includes('sustainability') ||
+          body.includes('governance') || body.includes('social')
+        );
+      });
+    } else if (activeTab === "emerging") {
+      filtered = tickets.filter(ticket => {
+        const subject = ticket.ticket_subject?.toLowerCase() || '';
+        const body = ticket.ticket_body.toLowerCase();
+        const area = ticket.product_area?.toLowerCase() || '';
+        
+        return (
+          // API related
+          subject.includes('api') || body.includes('api') || area.includes('api') ||
+          // Python/programming related
+          body.includes('python') || body.includes('sdk') || body.includes('library') ||
+          // Data science related  
+          body.includes('data science') || body.includes('automation') ||
+          body.includes('model') || body.includes('ml') || area.includes('data_export') ||
+          // Bulk/custom requests
+          body.includes('bulk') || body.includes('custom') || body.includes('export')
+        );
+      });
     }
     // For "assigned" tab, show all tickets (default behavior)
     
@@ -552,7 +656,7 @@ export default function Dashboard() {
     assignee: { name: string; role: string };
     formatTimeAgo: (timestamp: string) => string;
   }) => {
-    const sentimentScore = calculateSentiment(ticket);
+    const [isExpanded, setIsExpanded] = useState(false);
     
     return (
       <div 
@@ -561,51 +665,60 @@ export default function Dashboard() {
       >
         <div className="flex items-center gap-4 text-sm">
           {/* Ticket Number */}
-          <span className="bg-[#71FDFF] text-black px-2 py-1 text-xs font-medium rounded shrink-0">
+          <span className="bg-[#71FDFF] text-black px-2 py-1 text-xs font-medium rounded shrink-0 w-12 text-center">
             #{index + 1}
           </span>
           
           {/* Status Badge */}
-          <Badge 
-            variant="secondary" 
-            className={`${getStatusColor(ticket.ticket_status)} text-white border-0 px-2 py-1 text-xs shrink-0`}
-          >
-            {getStatusIcon(ticket.ticket_status)}
-            <span className="ml-1">{ticket.ticket_status}</span>
-          </Badge>
-
-          {/* Priority Indicator */}
-          <div className="shrink-0">
-            <PriorityIndicator priority={ticket.ticket_priority} />
+          <div className="shrink-0 w-20">
+            <Badge 
+              variant="secondary" 
+              className={`${getStatusColor(ticket.ticket_status)} text-white border-0 px-2 py-1 text-xs w-full justify-center`}
+            >
+              {getStatusIcon(ticket.ticket_status)}
+              <span className="ml-1">{ticket.ticket_status}</span>
+            </Badge>
           </div>
 
-          {/* Mini Sentiment Bar */}
-          <div className="flex items-center gap-2 shrink-0">
-            <div className="w-12 h-1 bg-gray-700 rounded-full relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 opacity-40"></div>
-              <div 
-                className={`absolute top-0 w-1 h-1 bg-gradient-to-r ${getSentimentColor(sentimentScore)} rounded-full transform -translate-x-1/2`}
-                style={{ left: `${sentimentScore * 100}%` }}
-              ></div>
-            </div>
-            <span className="text-xs text-gray-400">{getSentimentLabel(sentimentScore)}</span>
-          </div>
+          {/* Priority Text Only */}
+          <span className={`text-xs font-medium shrink-0 w-16 ${getPriorityColor(ticket.ticket_priority)}`}>
+            {ticket.ticket_priority}
+          </span>
 
-          {/* Ticket Subject - Main content */}
+          {/* Ticket Subject & Body - Main content */}
           <div className="flex-1 min-w-0">
-            <span className="text-white font-medium truncate block">
+            <div className="text-white font-medium text-sm mb-1">
               {ticket.ticket_subject || 'No Subject'}
-            </span>
+            </div>
+            {ticket.ticket_body && (
+              <div>
+                <p className={`text-gray-300 text-xs leading-relaxed ${isExpanded ? '' : 'line-clamp-1'}`}>
+                  {ticket.ticket_body}
+                </p>
+                {ticket.ticket_body.length > 80 && (
+                  <button
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="text-accent-cyan text-xs mt-1 hover:text-accent-cyan/80 flex items-center gap-1"
+                  >
+                    {isExpanded ? (
+                      <>Less <ChevronUp className="w-3 h-3" /></>
+                    ) : (
+                      <>More <ChevronRight className="w-3 h-3" /></>
+                    )}
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Product Area */}
-          <span className="text-xs text-gray-300 shrink-0">
+          <span className="text-xs text-gray-300 shrink-0 w-24 truncate">
             {ticket.product_area?.replace('_', ' ') || 'Unknown'}
           </span>
 
           {/* Tier */}
-          <span className="text-xs text-accent-cyan font-medium shrink-0">
-            T{ticket.client_firm_tier}
+          <span className="text-xs text-accent-cyan font-medium shrink-0 w-12 text-center">
+            {ticket.client_firm_tier}
           </span>
 
           {/* Time */}
@@ -614,14 +727,14 @@ export default function Dashboard() {
           </span>
 
           {/* Assignee */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-2 shrink-0 w-28">
             <Avatar className="w-6 h-6">
               <AvatarFallback className="bg-[#041420] text-accent-cyan text-xs font-medium">
                 {assignee.name.split(' ').map(n => n[0]).join('')}
               </AvatarFallback>
             </Avatar>
-            <span className="text-white text-xs font-medium min-w-0 truncate max-w-24">
-              {assignee.name}
+            <span className="text-white text-xs font-medium min-w-0 truncate">
+              {assignee.name.split(' ')[0]}
             </span>
           </div>
         </div>
@@ -759,7 +872,7 @@ export default function Dashboard() {
             
             {!isLegendCollapsed && (
               <div className="px-4 pb-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   
                   {/* Customer Sentiment */}
                   <div>
@@ -768,8 +881,8 @@ export default function Dashboard() {
                       Customer Sentiment
                     </h4>
                     <div className="space-y-2">
-                      <div className="w-32 h-2 bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 rounded-full opacity-60"></div>
-                      <div className="flex justify-between text-xs max-w-32">
+                      <div className="w-48 h-2 bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 rounded-full opacity-60"></div>
+                      <div className="flex justify-between text-xs w-48">
                         <div className="flex items-center gap-1">
                           <div className="w-2 h-2 bg-red-400 rounded-full"></div>
                           <span className="text-gray-300">Upset</span>
@@ -790,7 +903,7 @@ export default function Dashboard() {
                   </div>
 
                   {/* Priority Levels */}
-                  <div className="ml-8">
+                  <div>
                     <h4 className="text-white text-sm font-medium mb-2 flex items-center gap-2">
                       <Zap className="w-3 h-3 text-orange-400" />
                       Priority Levels
@@ -829,6 +942,24 @@ export default function Dashboard() {
                       </div>
                     </div>
                   </div>
+
+                  {/* Filter Categories */}
+                  <div>
+                    <h4 className="text-white text-sm font-medium mb-2 flex items-center gap-2">
+                      <Target className="w-3 h-3 text-accent-cyan" />
+                      Filter Categories
+                    </h4>
+                    <div className="space-y-2 text-xs">
+                      <div>
+                        <span className="text-accent-cyan font-medium">Strategic Initiatives:</span>
+                        <span className="text-gray-400 ml-1">AI/Kensho, Private Markets, ESG content</span>
+                      </div>
+                      <div>
+                        <span className="text-green-400 font-medium">Emerging Use-Cases:</span>
+                        <span className="text-gray-400 ml-1">API requests, Python/SDK needs, automation</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -855,7 +986,7 @@ export default function Dashboard() {
                     }`} />
                   </div>
                   <div>
-                    <div className="text-white text-xs font-medium">Assigned</div>
+                    <div className="text-white text-xs font-medium">All Tickets</div>
                   </div>
                   <span className={`text-xs px-2 py-1 rounded-full font-medium ${
                     activeTab === "assigned"
@@ -867,88 +998,59 @@ export default function Dashboard() {
                 </button>
 
                 <button
-                  onClick={() => setActiveTab("mentioned")}
+                  onClick={() => setActiveTab("strategic")}
                   className={`flex-1 flex items-center justify-center gap-2 p-3 text-center transition-colors ${
-                    activeTab === "mentioned"
+                    activeTab === "strategic"
                       ? "bg-accent-cyan/20 border-b-2 border-accent-cyan"
                       : "hover:bg-white/5"
                   }`}
                 >
                   <div className={`w-6 h-6 rounded flex items-center justify-center ${
-                    activeTab === "mentioned" ? "bg-accent-cyan" : "bg-white/20"
+                    activeTab === "strategic" ? "bg-accent-cyan" : "bg-white/20"
                   }`}>
-                    <Bot className={`w-3 h-3 ${
-                      activeTab === "mentioned" ? "text-primary-dark" : "text-white"
+                    <Target className={`w-3 h-3 ${
+                      activeTab === "strategic" ? "text-primary-dark" : "text-white"
                     }`} />
                   </div>
                   <div>
-                    <div className="text-white text-xs font-medium">Mentioned AI</div>
+                    <div className="text-white text-xs font-medium">Strategic Initiatives</div>
                   </div>
-                  {mentionedAI > 0 && (
+                  {strategicCount > 0 && (
                     <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                      activeTab === "mentioned"
+                      activeTab === "strategic"
                         ? "bg-accent-cyan text-primary-dark"
                         : "bg-white/20 text-white"
                     }`}>
-                      {mentionedAI}
+                      {strategicCount}
                     </span>
                   )}
                 </button>
 
                 <button
-                  onClick={() => setActiveTab("private-markets")}
+                  onClick={() => setActiveTab("emerging")}
                   className={`flex-1 flex items-center justify-center gap-2 p-3 text-center transition-colors ${
-                    activeTab === "private-markets"
+                    activeTab === "emerging"
                       ? "bg-accent-cyan/20 border-b-2 border-accent-cyan"
                       : "hover:bg-white/5"
                   }`}
                 >
                   <div className={`w-6 h-6 rounded flex items-center justify-center ${
-                    activeTab === "private-markets" ? "bg-accent-cyan" : "bg-white/20"
+                    activeTab === "emerging" ? "bg-accent-cyan" : "bg-white/20"
                   }`}>
-                    <Building className={`w-3 h-3 ${
-                      activeTab === "private-markets" ? "text-primary-dark" : "text-white"
+                    <Lightbulb className={`w-3 h-3 ${
+                      activeTab === "emerging" ? "text-primary-dark" : "text-white"
                     }`} />
                   </div>
                   <div>
-                    <div className="text-white text-xs font-medium">Private Markets</div>
+                    <div className="text-white text-xs font-medium">Emerging Use-Cases</div>
                   </div>
-                  {privateMarketsCount > 0 && (
+                  {emergingCount > 0 && (
                     <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                      activeTab === "private-markets"
+                      activeTab === "emerging"
                         ? "bg-accent-cyan text-primary-dark"
                         : "bg-white/20 text-white"
                     }`}>
-                      {privateMarketsCount}
-                    </span>
-                  )}
-                </button>
-
-                <button
-                  onClick={() => setActiveTab("esg")}
-                  className={`flex-1 flex items-center justify-center gap-2 p-3 text-center transition-colors ${
-                    activeTab === "esg"
-                      ? "bg-accent-cyan/20 border-b-2 border-accent-cyan"
-                      : "hover:bg-white/5"
-                  }`}
-                >
-                  <div className={`w-6 h-6 rounded flex items-center justify-center ${
-                    activeTab === "esg" ? "bg-accent-cyan" : "bg-white/20"
-                  }`}>
-                    <Leaf className={`w-3 h-3 ${
-                      activeTab === "esg" ? "text-primary-dark" : "text-white"
-                    }`} />
-                  </div>
-                  <div>
-                    <div className="text-white text-xs font-medium">ESG</div>
-                  </div>
-                  {esgCount > 0 && (
-                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                      activeTab === "esg"
-                        ? "bg-accent-cyan text-primary-dark"
-                        : "bg-white/20 text-white"
-                    }`}>
-                      {esgCount}
+                      {emergingCount}
                     </span>
                   )}
                 </button>
@@ -1074,19 +1176,36 @@ export default function Dashboard() {
             </div>
           ) : (
             /* List View */
-            <div className="space-y-3">
-              {filteredTickets.map((ticket, index) => {
-                const assignee = generateAssignee(ticket, index);
-                return (
-                  <TicketListItem
-                    key={ticket.ticket_id}
-                    ticket={ticket}
-                    index={index}
-                    assignee={assignee}
-                    formatTimeAgo={formatTimeAgo}
-                  />
-                );
-              })}
+            <div>
+              {/* Column Headers */}
+              <div className="bg-[#092946]/80 border border-[#71FDFF]/30 rounded-t-lg p-3 mb-3 backdrop-blur-sm">
+                <div className="flex items-center gap-4 text-xs font-medium text-gray-300">
+                  <span className="shrink-0 w-12">#</span>
+                  <span className="shrink-0 w-20">Status</span>
+                  <span className="shrink-0 w-16">Priority</span>
+                  <span className="flex-1 min-w-0">Subject & Description</span>
+                  <span className="shrink-0 w-24">Product Area</span>
+                  <span className="shrink-0 w-12">Tier</span>
+                  <span className="shrink-0 w-16">Time</span>
+                  <span className="shrink-0 w-28">Assignee</span>
+                </div>
+              </div>
+              
+              {/* Ticket Rows */}
+              <div className="space-y-2">
+                {filteredTickets.map((ticket, index) => {
+                  const assignee = generateAssignee(ticket, index);
+                  return (
+                    <TicketListItem
+                      key={ticket.ticket_id}
+                      ticket={ticket}
+                      index={index}
+                      assignee={assignee}
+                      formatTimeAgo={formatTimeAgo}
+                    />
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>
